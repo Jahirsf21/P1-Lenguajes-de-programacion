@@ -90,3 +90,88 @@ void liberarInventario(InventarioLibros *inventario){
     }
 
 }
+
+//Funciones principales de manejo de libros
+Libro* buscarLibroPorCodigo(InventarioLibros *inventario, const char *codigo) {
+    for(int i = 0; i < inventario->stockLibros; i++){
+        if(strcmp(inventario->libros[i].codigo, codigo) == 0){
+            return &inventario->libros[i];
+        } 
+    }
+    return NULL; //no encontrado
+}
+
+int registrarLibro(InventarioLibros *inventario) {
+    char codigoTemp[MAX_CODIGO];
+    char tituloTemp[MAX_TITULO];
+    char autorTemp[MAX_AUTOR];
+    float precioTemp;
+    int stockTemp;
+
+    printf("\n=== REGISTRO DE NUEVO LIBRO ===\n");
+    
+    printf("Ingrese el código del libro: ");
+    if (scanf("%s", codigoTemp) != 1) {
+        printf("Error al leer el código.\n");
+        limpiarBuffer();
+        return 0;
+    }
+    
+    if (!validarCodigoUnico(inventario, codigoTemp)) {
+        printf("Error: El código '%s' ya existe en el inventario.\n", codigoTemp);
+        return 0;
+    }
+
+    limpiarBuffer();
+
+    printf("Ingrese el título del libro: ");
+    if (fgets(tituloTemp, MAX_TITULO, stdin) == NULL) {
+        printf("Error al leer el título.\n");
+        return 0;
+    }
+
+    int len = largoCadena(tituloTemp);
+    if (len > 0 && tituloTemp[len-1] == '\n') {
+        tituloTemp[len-1] = '\0';
+    }
+    
+    printf("Ingrese el autor del libro: ");
+    if (fgets(autorTemp, MAX_AUTOR, stdin) == NULL) {
+        printf("Error al leer el autor.\n");
+        return 0;
+    }
+    len = largoCadena(autorTemp);
+    if (len > 0 && autorTemp[len-1] == '\n') {
+        autorTemp[len-1] = '\0';
+    }
+    
+    printf("Ingrese el precio del libro: ");
+    if (scanf("%f", &precioTemp) != 1 || precioTemp <= 0) {
+        printf("Error: El precio debe ser un número positivo.\n");
+        limpiarBuffer();
+        return 0;
+    }
+    
+    printf("Ingrese la cantidad inicial en stock: ");
+    if (scanf("%d", &stockTemp) != 1 || stockTemp < 0) {
+        printf("Error: La cantidad debe ser un número no negativo.\n");
+        limpiarBuffer();
+        return 0;
+    }
+
+    redimensionarInventario(inventario);
+    //agregar el libro al inventario
+    Libro *nuevoLibro = &inventario->libros[inventario->stockLibros];
+    copiarCadena(nuevoLibro->codigo, codigoTemp);
+    copiarCadena(nuevoLibro->titulo, tituloTemp);
+    copiarCadena(nuevoLibro->autor, autorTemp);
+    nuevoLibro->precio = precioTemp;
+    nuevoLibro->stock = stockTemp;
+
+    inventario->stockLibros++;
+
+    printf("Libro registrado exitosamente.\n");
+    mostrarLibro(nuevoLibro);
+
+    return 1;
+}
