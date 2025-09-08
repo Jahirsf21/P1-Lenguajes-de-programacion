@@ -37,7 +37,7 @@ int admin(){
             break;
         case 3:
             CLEAR;
-            registrarCliente();
+            menuRegistrarCliente();
             break;
         case 4:
             CLEAR;

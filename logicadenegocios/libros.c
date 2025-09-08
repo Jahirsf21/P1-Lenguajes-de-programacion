@@ -1,4 +1,6 @@
 #include "../headers/libros.h"
+#include "../headers/pedidos.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -173,6 +175,18 @@ void guardarLibros() {
     }
     fprintf(archivo, "]\n");
     fclose(archivo);
+}
+
+
+bool libroAsociadoPedido(char* codigo) {
+    for (int i = 0; i < cantidadPedidos; i++) {
+        for (int j = 0; j < pedidos[i].cantidadLibros; j++) {
+            if (strcmp(pedidos[i].libros[j].codigo, codigo) == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool validarStock(int cantidad) {

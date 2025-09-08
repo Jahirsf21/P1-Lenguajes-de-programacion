@@ -25,11 +25,14 @@ void registrarClientes(char* nombre, char* cedula, char* telefono);
 bool validarTelefono(char* telefono);
 bool validarCedula(char*  cedula);
 bool validarNombre(char* nombre);
+bool clienteTienePedidos(char* cedula);
+
 
 //Funciones encargadas de la liberacion de memoria
 void liberarCliente(Cliente* cliente);
 void liberarTodosLosClientes();
 void eliminarCliente(int indice);
+
 void eliminarClientePorCedula(char* cedula);
 
 

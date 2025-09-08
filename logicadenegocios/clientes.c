@@ -1,4 +1,5 @@
 #include "../headers/clientes.h"
+#include "../headers/pedidos.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,7 +66,6 @@ void eliminarClientePorCedula(char* cedula) {
     }
     printf("\033[0;31mNo se encontró un cliente con esa cédula\033[0m\n");
 }
-
 
 
 void mostrarTodosLosClientes() {
@@ -160,6 +160,15 @@ void cargarClientes() {
 	fclose(archivo);
 } 
 
+
+bool clienteTienePedidos(char* cedula) {
+    for (int i = 0; i < cantidadPedidos; i++) {
+        if (strcmp(pedidos[i].cliente->cedula, cedula) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 bool validarTelefono(char* telefono) {
     if (telefono == NULL || strlen(telefono) == 0) {

@@ -31,6 +31,7 @@ bool validarAutor(char* autor);
 bool validarCodigo(char* codigo);
 bool validarPrecio(float precio);
 bool validarStock(int cantidad);
+bool libroAsociadoPedido(char* codigo);
 
 //Funciones para liberar memoria
 void liberarLibro(Libro *libro);
