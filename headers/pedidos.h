@@ -5,7 +5,7 @@
 #include "libros.h"
 #include <stdbool.h>
 
-typedef struct detallePedido {
+typedef struct detallePedido { 
     Libro* libro;
     int cantidad;
 } DetallePedido;
