@@ -8,46 +8,226 @@
 #include <stdbool.h>
 #define CLEAR system("clear")
 
+
 void limpiarBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+int menuLibros(){
+    printf("Menú de Gestión de Libros:\n");
+    printf("1- Registrar Libro\n");
+    printf("2- Eliminar Libro\n");
+    printf("3- Regresar\n");
+    printf("Seleccione una opcion: ");
+
+    char input[10];
+        if(fgets(input, sizeof(input), stdin)) {  
+            input[strcspn(input, "\n")] = 0;
+            
+            if(strlen(input) == 0) {
+                CLEAR;
+            }
+            char respuesta = input[0];             
+                      
+            if(respuesta == '1') {
+                CLEAR;
+                menuRegistrarLibro();
+            } else if(respuesta == '2') {
+                CLEAR;
+                printf("Eliminar Libro\n");
+            } else if(respuesta == '3') {
+                return 0;
+            } else {
+                CLEAR;
+                printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
+                menuLibros();
+            }
+        } else {
+            limpiarBuffer();
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            menuLibros();
+        }
+    }
+
+int menuClientes(){
+    printf("Menu de Gestión de Clientes:\n");
+    printf("1- Registrar Cliente\n");
+    printf("2- Eliminar Cliente\n");
+    printf("3- Regresar\n");
+    printf("Seleccione una opción: ");
+    char input[10];
+        if(fgets(input, sizeof(input), stdin)) {  
+            input[strcspn(input, "\n")] = 0;
+            
+            if(strlen(input) == 0) {
+                CLEAR;
+            }
+            char respuesta = input[0];             
+                      
+            if(respuesta == '1') {
+                CLEAR;
+                printf("Registrar Cliente");
+            } else if(respuesta == '2') {
+                CLEAR;
+                printf("Eliminar Cliente\n");
+            } else if(respuesta == '3') {
+                return 0;
+            } else {
+                CLEAR;
+                printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
+                menuClientes();
+            }
+        } else {
+            limpiarBuffer();
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            menuClientes();
+        }
+
+}
+
+int menuPedidos(){
+    printf("Menu de Gestión de Pedidos:\n");
+    printf("1- Crear Pedido\n");
+    printf("2- Eliminar Pedido\n");
+    printf("3- Modificar Pedido\n");
+    printf("4- Regresar");
+    printf("Seleccione una opción: ");
+    char input[10];
+        if(fgets(input, sizeof(input), stdin)) {  
+            input[strcspn(input, "\n")] = 0;
+            
+            if(strlen(input) == 0) {
+                CLEAR;
+            }
+            char respuesta = input[0];             
+            switch (respuesta)
+            {
+            case '1':
+                CLEAR;
+                printf("Crear pedido");
+                break;
+            case '2':
+                CLEAR;
+                printf("eliminar Pedido");
+                break;
+            case '3':
+                CLEAR;
+                printf("Modificar Pedido");
+                break;
+            default:
+                CLEAR;
+                printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
+                menuPedidos();
+                break;
+            }    
+        } else {
+            limpiarBuffer();
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            menuPedidos();
+        }
+
+}
+
+int menuEstadisticas(){
+    printf("Menú de estadísticas:\n");
+    printf("1- Total de ventas\n");
+    printf("2- Clientes con más pedidos\n");
+    printf("3- Libros más vendidos\n");
+    printf("4- Autores con mas ventas por año\n");
+    printf("5- Regresar\n");
+    printf("Seleccione una opción: ");
+    char input[10];
+    int respuesta;
+    if(fgets(input, sizeof(input), stdin)){
+        input[strcspn(input, "\n")] = 0;
+            
+        if(strlen(input) == 0) {
+            CLEAR;
+        }
+        char respuesta = input[0];
+        switch (respuesta)
+        {
+        case '1':
+            CLEAR;
+            printf("total ventas");
+            break;
+        case '2':
+            CLEAR;
+            printf("clientes mas pedidos\n");
+            break;
+        case '3':
+            CLEAR;
+            printf("libros mas vendidos");
+            break;
+        case '4':
+            CLEAR;
+            printf("autores mas ventas");
+            break;
+        case '5':
+            CLEAR;
+            return 0;
+            break;
+        default:
+            CLEAR;
+            printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
+            menuEstadisticas();
+            break;
+        }
+    } else{
+        system("clear");
+        limpiarBuffer();
+        printf("\033[0;31mEntrada incorrecta. Por favor, ingresa un número\033[0m\n");
+        menuEstadisticas();
+    }
+
+}
+
 int admin(){
+    while(true){
     printf("Menú de opciones administrativas:\n");
-    printf("1- Registrar Libros\n");
+    printf("1- Gestión de Libros\n");
     printf("2- Carga de inventario\n");
-    printf("3- Registrar clientes\n");
-    printf("4- Crear Pedido\n");
+    printf("3- Gestión de Clientes\n");
+    printf("4- Gestión de Pedidos\n");
     printf("5- Estadisticas\n");
     printf("6- Regresar\n");
     printf("Seleccione una opción: ");
+    char input[10];
     int respuesta;
-    if(scanf("%d", &respuesta)==1){
-        limpiarBuffer();
+    if(fgets(input, sizeof(input), stdin)){
+        input[strcspn(input, "\n")] = 0;
+            
+        if(strlen(input) == 0) {
+            CLEAR;
+        }
+        char respuesta = input[0];
         switch (respuesta)
         {
-        case 1:
+        case '1':
             CLEAR;
-            menuRegistrarLibro();
+            menuLibros();
             break;
-        case 2:
+        case '2':
             CLEAR;
             printf("carga de inventario\n");
             break;
-        case 3:
+        case '3':
             CLEAR;
-            menuRegistrarCliente();
+            menuClientes();
             break;
-        case 4:
+        case '4':
             CLEAR;
-            printf("Crear pedido");
+            menuPedidos();
             break;
-        case 5:
+        case '5':
             CLEAR;
-            printf("Estadisticas");
+            menuEstadisticas();
             break;
-        case 6:
+        case '6':
             CLEAR;
             return 0;
             break;
@@ -63,6 +243,7 @@ int admin(){
         printf("\033[0;31mEntrada incorrecta. Por favor, ingresa un número\033[0m\n");
         admin();
     }
+}
 }
 
 
@@ -174,6 +355,7 @@ void menuRegistrarCliente() {
 
 
 int general(){
+    while(true){
     printf("Menú de opciones generales:\n");
     printf("1- Consulta de catálogo\n");
     printf("2- Consulta de cliente\n");
@@ -191,7 +373,7 @@ int general(){
                                    
             if(respuesta == '1') {
                 CLEAR;
-                printf("Catalogo");
+                mostrarTodosLosLibros();
             } else if(respuesta == '2') {
                 CLEAR;
                 printf("cliente");
@@ -208,10 +390,13 @@ int general(){
             printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
         }
     }
-
+}
 
 int main() {
+    
     system("clear");
+    cargarClientes();
+    cargarLibros();
     while(true){
         printf("Bienvenido al sistema de Librería\n");
         printf("Menu principal:\n");
