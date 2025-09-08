@@ -29,6 +29,7 @@ bool validarNombre(char* nombre);
 bool clienteTienePedidos(char* cedula);
 bool existeCliente(char* cedula);
 
+Cliente* buscarClientePorCedula(char* cedula);
 
 //Funciones encargadas de la liberacion de memoria
 void liberarCliente(Cliente* cliente);

@@ -7,8 +7,13 @@
 #include <ctype.h>
 #include <math.h>
 
+#define CLEAR system("clear")
+
 Libro* libros = NULL;
 int stockLibros = 0;
+
+
+
 
 void liberarLibro(Libro *libro) {
     if (libro != NULL) {
@@ -43,6 +48,29 @@ char* libroToString(Libro *libro) {
     char* resultado = malloc(largo);
     snprintf(resultado, largo, "Titulo: %s | Autor: %s | Codigo: %s | Precio: %.2f | Cantidad en stock: %d",libro->titulo, libro->autor, libro->codigo, libro->precio, libro->stock); 
     return resultado;
+}
+
+
+void mostrarLibrosPorAutor(char* autor) {
+    CLEAR;
+    printf("=== LIBROS FILTRADOS POR AUTOR: '%s' ===\n", autor);
+    int encontrados = 0;
+    for (int i = 0; i < stockLibros; i++) {
+        // strstr busca si el nombre del autor del libro contiene el texto buscado
+        if (strstr(libros[i].autor, autor) != NULL) {
+            char* mostrarLibros = libroToString(&libros[i]);
+            if (mostrarLibros != NULL) {
+                // Imprimimos la línea completa del libro
+                printf("%s\n", mostrarLibros);
+                free(mostrarLibros);
+                encontrados++;
+            }
+        }
+    }
+    if (encontrados == 0) {
+        printf("No se encontraron libros para el autor '%s'.\n", autor);
+    }
+    printf("==============================================\n\n");
 }
 
 void mostrarTodosLosLibros() {
@@ -162,8 +190,8 @@ void guardarLibros() {
 
 bool libroAsociadoPedido(char* codigo) {
     for (int i = 0; i < cantidadPedidos; i++) {
-        for (int j = 0; j < pedidos[i].cantidadLibros; j++) {
-            if (strcmp(pedidos[i].libros[j].codigo, codigo) == 0) {
+        for (int j = 0; j < pedidos[i].cantidadDetalles; j++) {
+            if (strcmp(pedidos[i].detalles[j].libro->codigo, codigo) == 0) {
                 return true;
             }
         }
@@ -258,17 +286,10 @@ bool existeLibro(char* codigo) {
 void eliminarStockLibro(char* codigo, int cantidad) {
     for (int i = 0; i < stockLibros; i++) {
         if (strcmp(libros[i].codigo, codigo) == 0) {
-            if (libros[i].stock >= cantidad) {
-                libros[i].stock -= cantidad;
-                guardarLibros(); 
-                printf("Stock del libro reducido exitosamente\n");
-            } else {
-                printf("No hay stock suficiente del libro \n");
-            }
+            libros[i].stock -= cantidad;
             return; 
         }
     }
-    printf("No se encontró ningún libro con el código %s.\n", codigo);
 }
 
 void agregarStockLibro(char* codigo, int cantidad) {
@@ -325,7 +346,126 @@ void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int s
     libros[stockLibros].stock = stock;
     
     stockLibros++;
-    system("clear");
+    CLEAR;
     printf("El libro ha sido registrado!\n");
     guardarLibros();
+}
+
+void menuRegistrarLibro() {
+    char titulo[100];    
+    char autor[100];    
+    char codigo[100];   
+    float precio;
+    int stock;
+    bool datosValidos = false;
+    
+    printf("=== REGISTRAR NUEVO LIBRO ===\n");  
+    
+    while (!datosValidos) {
+        // Solicitar título
+        do {
+            printf("Ingrese el titulo del libro: ");
+            fgets(titulo, sizeof(titulo), stdin);
+            if ((strlen(titulo) > 0) && (titulo[strlen(titulo)-1] == '\n')) {
+                titulo[strlen(titulo)-1] = '\0';
+            }
+        } while(!validarTitulo(titulo));
+        
+        // Solicitar autor
+        do {
+            printf("Ingrese el autor del libro: "); 
+            fgets(autor, sizeof(autor), stdin);
+            if ((strlen(autor) > 0) && (autor[strlen(autor)-1] == '\n')) {
+                autor[strlen(autor)-1] = '\0';
+            }
+        } while(!validarAutor(autor));
+        
+        // Solicitar código
+        do {
+            printf("Ingrese el codigo del libro: ");  
+            fgets(codigo, sizeof(codigo), stdin);
+            if ((strlen(codigo) > 0) && (codigo[strlen(codigo)-1] == '\n')) {
+                codigo[strlen(codigo)-1] = '\0';
+            }
+        } while(!validarCodigo(codigo));
+
+        do {
+            printf("Ingrese el precio del libro: ");
+            if (scanf("%f", &precio) != 1) {
+                printf("\033[0;31mPor favor ingrese un precio válido\033[0m\n");
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+                precio = -1; 
+            } else {
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+            }
+        } while(!validarPrecio(precio));
+        
+        do {
+            printf("Ingrese la cantidad en stock: ");
+            if (scanf("%d", &stock) <= 0) {
+                printf("\033[0;31mPor favor ingrese una cantidad válida (Mayor a 0)\033[0m\n");
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+                stock = -1; 
+            } else {
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+            }
+        } while(!validarStock(stock));
+        
+        datosValidos = true;
+    }
+    registrarLibro(titulo, autor, codigo, precio, stock);
+}
+
+
+void menuEliminarLibro() {
+    mostrarTodosLosLibros();
+    char codigo[100]; 
+    printf("=== ELIMINAR LIBRO ===\n");  
+    while (true) {
+        printf("Ingrese el codigo del libro que desea eliminar ( r ) para regresar: ");
+        fgets(codigo, sizeof(codigo), stdin);
+        if ((strlen(codigo) > 0) && (codigo[strlen(codigo)-1] == '\n')) {
+            codigo[strlen(codigo)-1] = '\0';
+        }
+
+        if (strlen(codigo) == 1 && tolower(codigo[0]) == 'r') {
+            CLEAR;
+            printf("Regresando al menú anterior...\n");
+            return;
+        }
+
+        if (!existeLibro(codigo)) {
+            continue;  
+        }
+        if (libroAsociadoPedido(codigo)) {
+            printf("\033[0;33mEl libro está asociado a un pedido y no puede ser eliminado.\033[0m\n");
+            return;  
+        }
+        char confirmacion[10];
+        while (true) {
+            printf("¿Estás seguro que deseas eliminar este libro? (s/n): ");
+            fgets(confirmacion, sizeof(confirmacion), stdin);
+
+            if (strlen(confirmacion) > 0 && confirmacion[strlen(confirmacion)-1] == '\n') {
+                confirmacion[strlen(confirmacion)-1] = '\0';
+            }
+
+            if (strlen(confirmacion) != 1 || (tolower(confirmacion[0]) != 's' && tolower(confirmacion[0]) != 'n')) {
+                printf("\033[0;31mEntrada inválida. Por favor ingresa 's' o 'n'.\033[0m\n");
+                continue;
+            }
+
+            if (tolower(confirmacion[0]) == 'n') {
+                printf("Eliminación cancelada.\n");
+                return;
+            }
+            break;
+        }
+        eliminarLibro(codigo);
+        break; 
+    }
 }

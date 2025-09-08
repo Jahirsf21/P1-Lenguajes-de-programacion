@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#define CLEAR system("clear")
 
 Cliente* clientes = NULL;
 int cantidadClientes = 0;
@@ -269,6 +270,99 @@ void registrarClientes(char* nombre, char* cedula, char* telefono) {
 	guardarClientes();
 }
 
+
+
+void menuRegistrarCliente() {
+    
+    char nombre[100];
+    char cedula[100];
+    char telefono[100];
+    bool datosValidos = false;
+    
+    printf("=== REGISTRAR NUEVO CLIENTE ===\n");
+
+    while (!datosValidos) {
+
+        do {
+            printf("Ingrese el nombre del cliente: ");
+            fgets(nombre, sizeof(nombre), stdin);
+            if ((strlen(nombre) > 0) && (nombre[strlen(nombre) - 1] == '\n')) {
+                nombre[strlen(nombre) - 1] = '\0';
+            }
+        } while (!validarNombre(nombre));
+        
+        do {
+            printf("Ingrese el numero de cedula (9 digitos): ");
+            fgets(cedula, sizeof(cedula), stdin);
+            if ((strlen(cedula) > 0) && (cedula[strlen(cedula) - 1] == '\n')) {
+                cedula[strlen(cedula) - 1] = '\0';
+            }
+        } while (!validarCedula(cedula));
+        
+        do {
+            printf("Ingrese el numero de telefono (8 digitos): ");
+            fgets(telefono, sizeof(telefono), stdin);
+            if ((strlen(telefono) > 0) && (telefono[strlen(telefono) - 1] == '\n')) {
+                telefono[strlen(telefono) - 1] = '\0';
+            }
+        } while (!validarTelefono(telefono));
+        
+        datosValidos = true;
+    }
+    registrarClientes(nombre, cedula, telefono);
+}
+
+
+
+
+void menuEliminarCliente() {
+    mostrarTodosLosClientes();
+    char cedula[100]; 
+    printf("=== ELIMINAR CLIENTE ===\n");  
+    while (true) {
+        printf("Ingrese la cedula del cliente que desea eliminar ( r ) para regresar: ");
+        fgets(cedula, sizeof(cedula), stdin);
+        if ((strlen(cedula) > 0) && (cedula[strlen(cedula)-1] == '\n')) {
+            cedula[strlen(cedula)-1] = '\0';
+        }
+
+        if (strlen(cedula) == 1 && tolower(cedula[0]) == 'r') {
+            CLEAR;
+            printf("Regresando al menú anterior...\n");
+            return;
+        }
+
+        if (!existeCliente(cedula)) {
+            continue;  
+        }
+        if (clienteTienePedidos(cedula)) {
+            printf("\033[0;33mEl cliente está asociado a un pedido y no puede ser eliminado.\033[0m\n");
+            return;  
+        }
+        char confirmacion[10];
+        while (true) {
+            printf("¿Estás seguro que deseas eliminar este cliente? (s/n): ");
+            fgets(confirmacion, sizeof(confirmacion), stdin);
+
+            if (strlen(confirmacion) > 0 && confirmacion[strlen(confirmacion)-1] == '\n') {
+                confirmacion[strlen(confirmacion)-1] = '\0';
+            }
+
+            if (strlen(confirmacion) != 1 || (tolower(confirmacion[0]) != 's' && tolower(confirmacion[0]) != 'n')) {
+                printf("\033[0;31mEntrada inválida. Por favor ingresa 's' o 'n'.\033[0m\n");
+                continue;
+            }
+
+            if (tolower(confirmacion[0]) == 'n') {
+                printf("Eliminación cancelada.\n");
+                return;
+            }
+            break;
+        }
+        eliminarClientePorCedula(cedula);
+        break; 
+    }
+}
 
 
 

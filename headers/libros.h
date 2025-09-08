@@ -15,6 +15,7 @@ extern int stockLibros;
 
 char* libroToString(Libro *libro);
 void mostrarTodosLosLibros();
+void mostrarLibrosPorAutor(char* autor);
 
 //Funciones para el registro, cargado y guardado de los libros
 void menuRegistrarLibro();
@@ -46,5 +47,6 @@ bool libroAsociadoPedido(char* codigo);
 //Funciones para liberar memoria
 void liberarLibro(Libro *libro);
 void liberarTodosLosLibros();
+
 
 #endif //LIBROS_H
