@@ -1,6 +1,5 @@
 #include "../headers/libros.h"
 #include "../headers/pedidos.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,17 +29,24 @@ void liberarLibro(Libro *libro) {
 
 void liberarTodosLosLibros() {
     if (libros != NULL) {
-    for (int i = 0; i < stockLibros; i++) {
-        liberarLibro(&libros[i]);
-    }
-    free(libros);
-    libros = NULL;
-    stockLibros = 0;
+        for (int i = 0; i < stockLibros; i++) {
+            liberarLibro(&libros[i]);
+        }
+        free(libros);
+        libros = NULL;
+        stockLibros = 0;
     }
 }
 
+char* libroToString(Libro *libro) {
+    int largo = strlen(libro->titulo) + strlen(libro->autor) + strlen(libro->codigo) + 100;
+    char* resultado = malloc(largo);
+    snprintf(resultado, largo, "Titulo: %s | Autor: %s | Codigo: %s | Precio: %.2f | Cantidad en stock: %d",libro->titulo, libro->autor, libro->codigo, libro->precio, libro->stock); 
+    return resultado;
+}
+
 void mostrarTodosLosLibros() {
-    printf("\n=== LISTA  DE LIBROS ===\n");
+    printf("=== LISTA DE LIBROS ===\n");
     if (stockLibros == 0) {
         printf("No hay libros en el stock.\n");
     } else {
@@ -52,106 +58,78 @@ void mostrarTodosLosLibros() {
             }
         }
     }
-    printf("Total de libros: %d\n", stockLibros);
+    printf("Total de titulos: %d\n", stockLibros);
     printf("==================================\n");
 }
-
-char* libroToString(Libro *libro) {
-    char stock[100];
-    char precio[100];
-    int largo = strlen(libro->titulo) + strlen(libro->autor) + strlen(libro->codigo) + strlen(precio) +strlen(stock)+ 50;
-    char* resultado = malloc(largo);
-    if (resultado == NULL) {
-        return NULL;
-    }
-    snprintf(resultado, largo,  "Titulo: %s | Autor: %s | Codigo: %s | Precio: %.1f | Cantidad en stock: %d",libro->titulo,libro->autor,libro->codigo,libro->precio,libro->stock);
-    return resultado;
-}
-
 void cargarLibros() {
     FILE* archivo = fopen("store/libros.json", "r");
-    if (archivo == NULL) {
-        stockLibros = 0;
-        return;
-    }
-    char buffer[100];
-    char titulo[100];
-    char autor[100];
-    char codigo[100];
-    float precio;
-    int stock;
-    fgets(buffer,sizeof(buffer), archivo);
-    while (fgets(buffer,sizeof(buffer),archivo)) {
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), archivo) != NULL) {
+        if (strstr(buffer, "{")) {
+            char titulo[100] = "";
+            char autor[100] = "";
+            char codigo[100] = "";
+            float precio = 0.0;
+            int stock = 0;
 
-        //Para el titulo
-        if (strstr(buffer, "\"titulo\":")) {
+            // Leer Título
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"titulo\":")) {
+                char* inicio = strchr(buffer, ':') + 3;
+                char* fin = strrchr(buffer, '\"');
+                if (inicio && fin && fin > inicio) {
+                    strncpy(titulo, inicio, fin - inicio);
+                    titulo[fin - inicio] = '\0';
+                }
+            }
+            
+            // Leer Autor
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"autor\":")) {
+                char* inicio = strchr(buffer, ':') + 3;
+                char* fin = strrchr(buffer, '\"');
+                if (inicio && fin && fin > inicio) {
+                    strncpy(autor, inicio, fin - inicio);
+                    autor[fin - inicio] = '\0';
+                }
+            }
+            
+            // Leer Código
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"codigo\":")) {
+                char* inicio = strchr(buffer, ':') + 3;
+                char* fin = strrchr(buffer, '\"');
+                if (inicio && fin && fin > inicio) {
+                    strncpy(codigo, inicio, fin - inicio);
+                    codigo[fin - inicio] = '\0';
+                }
+            }
 
-            char* inicio = strchr(buffer, '\"');
-            inicio = strchr(inicio + 1, '\"') + 1;
-            char* fin = strchr(inicio, '\"');
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"precio\":")) {
+                char* inicio = strchr(buffer, ':') + 1;
+                precio = atof(inicio);
+            }
 
-            int largo = fin - inicio;
-            strncpy(titulo, inicio, largo);
-            titulo[largo] = '\0';
-        }
+            // Leer Stock 
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"stock\":")) {
+                char* inicio = strchr(buffer, ':') + 1;
+                stock = atoi(inicio);
+            }
 
-        //Para la autor
-        if (strstr(buffer, "\"autor\":")) {
+            if (strlen(titulo) > 0 && strlen(autor) > 0 && strlen(codigo) > 0) {
+                libros = realloc(libros, (stockLibros + 1) * sizeof(Libro));
 
-            char* inicio = strchr(buffer, '\"');
-            inicio = strchr(inicio + 1, '\"') + 1;
-            char* fin = strchr(inicio, '\"');
+                libros[stockLibros].titulo = malloc(strlen(titulo) + 1);
+                strcpy(libros[stockLibros].titulo, titulo);
 
-            int largo = fin - inicio;
-            strncpy(autor, inicio, largo);
-            autor[largo] = '\0';
-        }
+                libros[stockLibros].autor = malloc(strlen(autor) + 1);
+                strcpy(libros[stockLibros].autor, autor);
 
-        //Para el codigo
-        if (strstr(buffer, "\"codigo\":")) {
+                libros[stockLibros].codigo = malloc(strlen(codigo) + 1);
+                strcpy(libros[stockLibros].codigo, codigo);
 
-            char* inicio = strchr(buffer, '\"');
-            inicio = strchr(inicio + 1, '\"') + 1;
-            char* fin = strchr(inicio, '\"');
-
-            int largo = fin - inicio;
-            strncpy(codigo, inicio, largo);
-            codigo[largo] = '\0';
-        }
-
-        //Para el precio
-        if (strstr(buffer, "\"precio\":")) {
-            char* inicio = strchr(buffer, ':') + 1;
-            while (*inicio == ' ') inicio++;  
-            precio = atof(inicio); 
-        }
-
-        //Para el stock
-        if (strstr(buffer, "\"stock\":")) {
-            char* inicio = strchr(buffer, ':') + 1;
-            while (*inicio == ' ') inicio++;  // Saltar espacios
-            stock = atoi(inicio);  // atoi() convierte string a int
-
-            libros = realloc(libros, (stockLibros +1) * sizeof(Libro));
-
-            //Titulo del libro
-            libros[stockLibros].titulo = malloc(strlen(titulo) +1);
-            strcpy(libros[stockLibros].titulo,titulo);
-
-            //Autor del libro
-            libros[stockLibros].autor = malloc(strlen(autor) +1);
-            strcpy(libros[stockLibros].autor,autor);
-
-            //Codigo del libro
-            libros[stockLibros].codigo = malloc(strlen(codigo) +1);
-            strcpy(libros[stockLibros].codigo, codigo);
-
-            //Precio del libro
-            libros[stockLibros].precio = precio;
-
-            //Cantidad en stock
-            libros[stockLibros].stock = stock;
-            stockLibros++;
+                libros[stockLibros].precio = precio;
+                libros[stockLibros].stock = stock;
+                
+                stockLibros++;
+            }
         }
     }
     fclose(archivo);
@@ -159,6 +137,10 @@ void cargarLibros() {
 
 void guardarLibros() {
     FILE* archivo = fopen("store/libros.json", "w");
+    if (archivo == NULL) {
+        printf("Error: No se pudo abrir el archivo para guardar los libros.\n");
+        return;
+    }
     fprintf(archivo, "[\n");
     for (int i = 0; i < stockLibros; i++) {
         fprintf(archivo, "    {\n");
@@ -166,17 +148,17 @@ void guardarLibros() {
         fprintf(archivo, "        \"autor\": \"%s\",\n", libros[i].autor);
         fprintf(archivo, "        \"codigo\": \"%s\",\n", libros[i].codigo);
         fprintf(archivo, "        \"precio\": %.2f,\n", libros[i].precio);
-        fprintf(archivo, "        \"cantidad en stock\": %d\n", libros[i].stock); 
+        fprintf(archivo, "        \"stock\": %d\n", libros[i].stock);
+        fprintf(archivo, "    }");
         if (i < stockLibros - 1) {
-            fprintf(archivo, "    },\n");
+            fprintf(archivo, ",\n");
         } else {
-            fprintf(archivo, "    }\n");
+            fprintf(archivo, "\n");  
         }
     }
     fprintf(archivo, "]\n");
     fclose(archivo);
 }
-
 
 bool libroAsociadoPedido(char* codigo) {
     for (int i = 0; i < cantidadPedidos; i++) {
@@ -199,7 +181,7 @@ bool validarStock(int cantidad) {
 
 bool validarPrecio(float precio) {
     if (isnan(precio) || precio <= 0) {
-        printf("\033[0;31mEl precio debe ser un flotante y no puede ser menor a 0\033[0m\n");
+        printf("\033[0;31mEl precio debe ser un numero y no puede ser menor a 0\033[0m\n");
         return false;
     }
     return true;
@@ -251,12 +233,26 @@ bool validarTitulo(char* titulo) {
     }
     for (int i = 0; titulo[i] != '\0'; i++) {
         if (!isalpha(titulo[i]) && titulo[i] != ' ') {
-            printf("\033[0;31mEl titulo debe contener solo debe contener letras\033[0m\n");
+            printf("\033[0;31mEl titulo solo debe contener letras\033[0m\n");
             return false;
         }
 
     }
     return true;
+}
+
+bool existeLibro(char* codigo) {
+    if (codigo == NULL || strlen(codigo) == 0) {
+        printf("\033[0;31mDebes ingresar el codigo del libro a buscar\033[0m\n");
+        return false;
+    }
+    for (int i = 0; i < stockLibros; i++) {
+        if (strcmp(libros[i].codigo, codigo) == 0) {
+            return true; 
+        }
+    }
+    printf("\033[0;31mNo existe un libro con ese codigo\033[0m\n");
+    return false; 
 }
 
 void eliminarStockLibro(char* codigo, int cantidad) {
@@ -288,47 +284,48 @@ void agregarStockLibro(char* codigo, int cantidad) {
 }
 
 void eliminarLibro(char* codigo) {
+    int indice = -1;
     for (int i = 0; i < stockLibros; i++) {
         if(strcmp(libros[i].codigo, codigo) == 0) {
-            free(libros[i].titulo);
-            free(libros[i].autor);
-            free(libros[i].codigo);
-            for (int j = i; j < stockLibros - 1; j++) {
-                libros[j] = libros[j + 1];
-            }
-            stockLibros--;
-            libros = realloc(libros, stockLibros * sizeof(Libro));
-            guardarLibros();
-            printf("Libro eliminado exitosamente.\n");
-            return;  
+            indice = i;
+            break;
         }
+    }
+    
+    if (indice != -1) {
+        liberarLibro(&libros[indice]);
+        for (int i = indice; i < stockLibros - 1; i++) {
+            libros[i] = libros[i + 1];
+        }
+        stockLibros--;
+        if (stockLibros > 0) {
+            libros = realloc(libros, stockLibros * sizeof(Libro));
+        } else {
+            free(libros);
+            libros = NULL;
+        }
+        guardarLibros();
+        printf("Libro eliminado exitosamente.\n");
     }
 }
 
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock) {
+    libros = realloc(libros, (stockLibros + 1) * sizeof(Libro));
 
-    libros = realloc(libros, (stockLibros +1) * sizeof(Libro));
+    libros[stockLibros].titulo = malloc(strlen(titulo) + 1);
+    strcpy(libros[stockLibros].titulo, titulo);
 
-    //Titulo del libro
-    libros[stockLibros].titulo = malloc(strlen(titulo) +1);
-    strcpy(libros[stockLibros].titulo,titulo);
+    libros[stockLibros].autor = malloc(strlen(autor) + 1);
+    strcpy(libros[stockLibros].autor, autor);
 
-    //Autor del libro
-    libros[stockLibros].autor = malloc(strlen(autor) +1);
-    strcpy(libros[stockLibros].autor,autor);
-
-    //Codigo del libro
-    libros[stockLibros].codigo = malloc(strlen(codigo) +1);
+    libros[stockLibros].codigo = malloc(strlen(codigo) + 1);
     strcpy(libros[stockLibros].codigo, codigo);
 
-    //Precio del libro
     libros[stockLibros].precio = precio;
-
-    //Cantidad en stock
     libros[stockLibros].stock = stock;
+    
     stockLibros++;
     system("clear");
     printf("El libro ha sido registrado!\n");
     guardarLibros();
-
 }

@@ -18,12 +18,22 @@ void mostrarTodosLosLibros();
 
 //Funciones para el registro, cargado y guardado de los libros
 void menuRegistrarLibro();
+void menuAgregarStockLibro();
+
+
+void menuEliminarLibro();
+
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock);
 void cargarLibros();
 void guardarLibros();
 void eliminarStockLibro(char *codigo, int cantidad);
 void eliminarLibro(char *codigo);
 void agregarStockLibro(char* codigo, int cantidad);
+
+
+
+//Funciones de busqueda
+bool existeLibro(char* codigo);
 
 //Validaciones en los tipos de datos para el libro
 bool validarTitulo(char* titulo);

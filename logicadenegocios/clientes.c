@@ -64,12 +64,11 @@ void eliminarClientePorCedula(char* cedula) {
             return;
         }
     }
-    printf("\033[0;31mNo se encontró un cliente con esa cédula\033[0m\n");
 }
 
 
 void mostrarTodosLosClientes() {
-    printf("\n=== LISTA COMPLETA DE CLIENTES ===\n");
+    printf("=== LISTA COMPLETA DE CLIENTES ===\n");
     if (cantidadClientes == 0) {
         printf("No hay clientes registrados.\n");
     } else {
@@ -97,68 +96,71 @@ char* clienteToString(Cliente *cliente) {
 }
 
 void cargarClientes() {
-	FILE* archivo = fopen("store/clientes.json", "r");
-	if (archivo == NULL) {
-		cantidadClientes = 0;
-		return;
-	}
-	char buffer[100];
-	char nombre[100];
-	char cedula[100];
-	char telefono[100];
-	fgets(buffer, sizeof(buffer),archivo);
-	while (fgets(buffer,sizeof(buffer),archivo)) {
+    FILE* archivo = fopen("store/clientes.json", "r");
 
-		// Para el nombre
-		if (strstr(buffer, "\"nombre\":")) {
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), archivo) != NULL) {
+        if (strstr(buffer, "{")) {
+            char nombre[100] = "";
+            char cedula[100] = "";
+            char telefono[100] = "";
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"nombre\":")) {
+                char* inicio = strchr(buffer, ':') + 3; 
+                char* fin = strrchr(buffer, '\"'); 
+                if (inicio && fin && fin > inicio) {
+                    strncpy(nombre, inicio, fin - inicio);
+                    nombre[fin - inicio] = '\0';
+                }
+            }
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"cedula\":")) {
+                char* inicio = strchr(buffer, ':') + 3;
+                char* fin = strrchr(buffer, '\"');
+                if (inicio && fin && fin > inicio) {
+                    strncpy(cedula, inicio, fin - inicio);
+                    cedula[fin - inicio] = '\0';
+                }
+            }
+            if (fgets(buffer, sizeof(buffer), archivo) && strstr(buffer, "\"telefono\":")) {
+                char* inicio = strchr(buffer, ':') + 3;
+                char* fin = strrchr(buffer, '\"');
+                if (inicio && fin && fin > inicio) {
+                    strncpy(telefono, inicio, fin - inicio);
+                    telefono[fin - inicio] = '\0';
+                }
+            }
+            
+            if (strlen(nombre) > 0 && strlen(cedula) > 0 && strlen(telefono) > 0) {
+                clientes = realloc(clientes, (cantidadClientes + 1) * sizeof(Cliente));
 
-			char* inicio = strchr(buffer, '\"');
-			inicio = strchr(inicio + 1, '\"') + 1;
-			char* fin = strchr(inicio, '\"');
+                clientes[cantidadClientes].nombre = malloc(strlen(nombre) + 1);
+                strcpy(clientes[cantidadClientes].nombre, nombre);
 
-			int largo = fin - inicio;
-			strncpy(nombre, inicio, largo);
-			nombre[largo] = '\0';
-		}
-		// Para la cedula
-		if (strstr(buffer, "\"cedula\":")) {
+                clientes[cantidadClientes].cedula = malloc(strlen(cedula) + 1);
+                strcpy(clientes[cantidadClientes].cedula, cedula);
 
-			char* inicio = strchr(buffer, '\"');
-			inicio = strchr(inicio + 1, '\"') + 1;
-			char* fin = strchr(inicio, '\"');
+                clientes[cantidadClientes].telefono = malloc(strlen(telefono) + 1);
+                strcpy(clientes[cantidadClientes].telefono, telefono);
+                
+                cantidadClientes++;
+            }
+        }
+    }
+    fclose(archivo);
+}
 
-			int largo = fin - inicio;
-			strncpy(cedula, inicio, largo);
-			cedula[largo] = '\0';
-		}
-		if (strstr(buffer, "\"telefono\":")) {
-
-			char* inicio = strchr(buffer, '\"');
-			inicio = strchr(inicio + 1, '\"') + 1;
-			char* fin = strchr(inicio, '\"');
-
-			int largo = fin - inicio;
-			strncpy(telefono, inicio, largo);
-			telefono[largo] = '\0';
-
-			clientes = realloc(clientes, (cantidadClientes + 1) * sizeof(Cliente));
-
-			//Para el nombre
-			clientes[cantidadClientes].nombre = malloc(strlen(nombre) + 1);
-			strcpy(clientes[cantidadClientes].nombre, nombre);
-
-			//Para la cedula
-			clientes[cantidadClientes].cedula = malloc(strlen(cedula) + 1);
-			strcpy(clientes[cantidadClientes].cedula, cedula);
-
-			//Para el telefono
-			clientes[cantidadClientes].telefono = malloc(strlen(telefono) + 1);
-			strcpy(clientes[cantidadClientes].telefono, telefono);
-			cantidadClientes++;
-		}
-	}
-	fclose(archivo);
-} 
+bool existeCliente(char* cedula) {
+    if (cedula == NULL || strlen(cedula) == 0) {
+        printf("\033[0;31mDebes ingresar la cedula del cliente a buscar\033[0m\n");
+        return false;
+    }
+    for (int i = 0; i < cantidadClientes; i++) {
+        if (strcmp(clientes[i].cedula, cedula) == 0) {
+            return true; 
+        }
+    }
+    printf("\033[0;31mNo existe un cliente con esa cedula\033[0m\n");
+    return false; 
+}
 
 
 bool clienteTienePedidos(char* cedula) {
@@ -227,25 +229,28 @@ bool validarNombre(char* nombre) {
 }
 
 void guardarClientes() {
-	FILE* archivo = fopen("store/clientes.json", "w");
-	fprintf(archivo, "[\n");
-	for (int i = 0; i < cantidadClientes; i++) {
-	    fprintf(archivo, "    {\n");
-	    fprintf(archivo, "        \"nombre\": \"%s\",\n", clientes[i].nombre);
-		fprintf(archivo, "        \"cedula\": \"%s\",\n", clientes[i].cedula);
-		fprintf(archivo, "        \"telefono\": \"%s\"\n", clientes[i].telefono);
-	    if ( i < cantidadClientes -1) {
-            fprintf(archivo, "    },\n");
+    FILE* archivo = fopen("store/clientes.json", "w");
+    if (archivo == NULL) {
+        printf("Error: No se pudo abrir el archivo para guardar clientes.\n");
+        return;
+    }
+    fprintf(archivo, "[\n");
+    for (int i = 0; i < cantidadClientes; i++) {
+        fprintf(archivo, "    {\n");
+        fprintf(archivo, "        \"nombre\": \"%s\",\n", clientes[i].nombre);
+        fprintf(archivo, "        \"cedula\": \"%s\",\n", clientes[i].cedula);
+        fprintf(archivo, "        \"telefono\": \"%s\"\n", clientes[i].telefono);
+        
+        fprintf(archivo, "    }");
+        if (i < cantidadClientes - 1) {
+            fprintf(archivo, ",\n"); 
         } else {
-            fprintf(archivo, "    }\n");
+            fprintf(archivo, "\n");
         }
-	}
-	fprintf(archivo, "]\n");
-	fclose(archivo);
+    }
+    fprintf(archivo, "]\n");
+    fclose(archivo);
 }
-
-
-
 
 void registrarClientes(char* nombre, char* cedula, char* telefono) {
 	clientes = realloc(clientes, (cantidadClientes + 1) * sizeof(Cliente));
@@ -263,13 +268,6 @@ void registrarClientes(char* nombre, char* cedula, char* telefono) {
 	printf("El cliente ha sido registrado!\n");
 	guardarClientes();
 }
-
-
-
-
-
-
-
 
 
 

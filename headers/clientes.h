@@ -19,6 +19,7 @@ char* clienteToString(Cliente *cliente);
 void cargarClientes();
 void guardarClientes();
 void menuRegistrarCliente();
+void menuEliminarCliente();
 void registrarClientes(char* nombre, char* cedula, char* telefono);
 
 //Validaciones para los tipos de datos que tiene el cliente
@@ -26,6 +27,7 @@ bool validarTelefono(char* telefono);
 bool validarCedula(char*  cedula);
 bool validarNombre(char* nombre);
 bool clienteTienePedidos(char* cedula);
+bool existeCliente(char* cedula);
 
 
 //Funciones encargadas de la liberacion de memoria
