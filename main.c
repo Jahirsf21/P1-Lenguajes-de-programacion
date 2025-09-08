@@ -132,7 +132,7 @@ void menuRegistrarLibro() {
 }
 
 
-void registrarCliente() {
+void menuRegistrarCliente() {
     
     char nombre[100];
     char cedula[100];

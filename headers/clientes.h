@@ -18,7 +18,7 @@ char* clienteToString(Cliente *cliente);
 //Funciones encargadas del registro de clientes y guardado, cargado de datos
 void cargarClientes();
 void guardarClientes();
-void registrarCliente();
+void menuRegistrarCliente();
 void registrarClientes(char* nombre, char* cedula, char* telefono);
 
 //Validaciones para los tipos de datos que tiene el cliente
