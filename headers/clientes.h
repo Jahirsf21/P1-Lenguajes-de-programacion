@@ -11,15 +11,26 @@ typedef struct cliente {
 extern Cliente* clientes;
 extern int cantidadClientes;
 
+//Funciones encargadas de mostrar la informacion del cliente y los clientes.
+void mostrarTodosLosClientes();
+char* clienteToString(Cliente *cliente);
 
-char* clienteToString(Cliente cliente);
-void cargarClientes(void);
+//Funciones encargadas del registro de clientes y guardado, cargado de datos
+void cargarClientes();
+void guardarClientes();
+void registrarCliente();
+void registrarClientes(char* nombre, char* cedula, char* telefono);
+
+//Validaciones para los tipos de datos que tiene el cliente
 bool validarTelefono(char* telefono);
 bool validarCedula(char*  cedula);
 bool validarNombre(char* nombre);
-void guardarClientes(void);
-void registrarClientes(char* nombre, char* cedula, char* telefono);
-void registrarCliente(void);
+
+//Funciones encargadas de la liberacion de memoria
+void liberarCliente(Cliente* cliente);
+void liberarTodosLosClientes();
+void eliminarCliente(int indice);
+void eliminarClientePorCedula(char* cedula);
 
 
 #endif

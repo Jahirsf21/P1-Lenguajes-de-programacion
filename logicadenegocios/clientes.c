@@ -8,18 +8,95 @@
 Cliente* clientes = NULL;
 int cantidadClientes = 0;
 
+void liberarCliente(Cliente* cliente) {
+    if (cliente != NULL) {
+        if (cliente->nombre != NULL) {
+            free(cliente->nombre);
+            cliente->nombre = NULL;
+        }
+        if (cliente->cedula != NULL) {
+            free(cliente->cedula);
+            cliente->cedula = NULL;
+        }
+        if (cliente->telefono != NULL) {
+            free(cliente->telefono);
+            cliente->telefono = NULL;
+        }
+    }
+}
 
-char* clienteToString(Cliente cliente) {
-	int largo = strlen(cliente.nombre) + strlen(cliente.cedula) + strlen(cliente.telefono) + 50;
+void liberarTodosLosClientes() {
+    if (clientes != NULL) {
+        for (int i = 0; i < cantidadClientes; i++) {
+            liberarCliente(&clientes[i]);
+        }
+        free(clientes);
+        clientes = NULL;
+        cantidadClientes = 0;
+    }
+}
+void eliminarCliente(int indice) {
+    if (indice < 0 || indice >= cantidadClientes) {
+        printf("\033[0;31mÍndice de cliente inválido\033[0m\n");
+        return;
+    }
+    liberarCliente(&clientes[indice]);
+    for (int i = indice; i < cantidadClientes - 1; i++) {
+        clientes[i] = clientes[i + 1];
+    }
+    cantidadClientes--;
+    if (cantidadClientes > 0) {
+        clientes = realloc(clientes, cantidadClientes * sizeof(Cliente));
+    } else {
+        free(clientes);
+        clientes = NULL;
+    }
+    
+    printf("\033[0;32mCliente eliminado exitosamente\033[0m\n");
+    guardarClientes();
+}
+
+void eliminarClientePorCedula(char* cedula) {
+    for (int i = 0; i < cantidadClientes; i++) {
+        if (strcmp(clientes[i].cedula, cedula) == 0) {
+            eliminarCliente(i);
+            return;
+        }
+    }
+    printf("\033[0;31mNo se encontró un cliente con esa cédula\033[0m\n");
+}
+
+
+
+void mostrarTodosLosClientes() {
+    printf("\n=== LISTA COMPLETA DE CLIENTES ===\n");
+    if (cantidadClientes == 0) {
+        printf("No hay clientes registrados.\n");
+    } else {
+        for (int i = 0; i < cantidadClientes; i++) {
+            char* mostrarClientes = clienteToString(&clientes[i]);
+            if (mostrarClientes!= NULL) {
+                printf("%d. %s\n", i+1, mostrarClientes);
+                free(mostrarClientes);
+            }
+        }
+    }
+    printf("Total de clientes: %d\n", cantidadClientes);
+    printf("==================================\n");
+}
+
+
+char* clienteToString(Cliente *cliente) {
+	int largo = strlen(cliente->nombre) + strlen(cliente->cedula) + strlen(cliente->telefono) + 50;
 	char* resultado = malloc(largo);
 	if (resultado == NULL) {
 		return NULL;
 	}
-	snprintf(resultado, largo,  "Nombre: %s | Cédula: %s | Teléfono: %s",cliente.nombre, cliente.cedula, cliente.telefono);
+	snprintf(resultado, largo,  "Nombre: %s | Cédula: %s | Teléfono: %s",cliente->nombre, cliente->cedula, cliente->telefono);
 	return resultado;
 }
 
-void cargarClientes(void) {
+void cargarClientes() {
 	FILE* archivo = fopen("store/clientes.json", "r");
 	if (archivo == NULL) {
 		cantidadClientes = 0;
@@ -85,48 +162,62 @@ void cargarClientes(void) {
 
 
 bool validarTelefono(char* telefono) {
-	if (telefono == NULL && strlen(telefono) == 0) {
-		printf("El numero de telefono no puede estar vacio");
-		return false;
-	}
-	if (strlen(telefono) != 8) {
-		printf("El numero de telefono solo puede tener 8 digitos");
-	}
-	for (int i = 0; telefono[i] != '\0'; i++) {
-		if (!isdigit(telefono)) {
-			printf("El numero de telefono solo debe contener numeros");
-		}
-	}
+    if (telefono == NULL || strlen(telefono) == 0) {
+        printf("\033[0;31mEl numero de telefono no puede estar vacio\033[0m\n");
+        return false;
+    }
+    if (strlen(telefono) != 8) {
+        printf("\033[0;31mEl numero de telefono solo puede tener 8 digitos\033[0m\n");
+        return false;
+    }
+    for (int i = 0; telefono[i] != '\0'; i++) {
+        if (!isdigit(telefono[i])) {
+            printf("\033[0;31mEl numero de telefono solo debe contener numeros\033[0m\n");
+            return false;
+        }
+    }
+    return true;
 }
-bool validarCedula(char*  cedula) {
-	if (cedula == NULL && strlen(cedula) == 0) {
-		printf("El numero de cedula no puede estar vacio");
-	}
-	if (strlen(cedula) != 9) {
-		printf("La cedula solo puede tener 9 digitos");
-	}
-	for (int i = 0; cedula[i] != '\0'; i++) {
-		if (!isdigit(cedula)) {
-			printf("La cedula solo debe contener numeros");
-		}
-	}
+
+bool validarCedula(char* cedula) {
+    if (cedula == NULL || strlen(cedula) == 0) {
+        printf("\033[0;31mEl numero de cedula no puede estar vacio\033[0m\n");
+        return false;
+    }
+    if (strlen(cedula) != 9) {
+        printf("\033[0;31mLa cedula solo puede tener 9 digitos\033[0m\n");
+        return false;
+    }
+    for (int i = 0; cedula[i] != '\0'; i++) {
+        if (!isdigit(cedula[i])) {
+            printf("\033[0;31mLa cedula solo debe contener numeros\033[0m\n");
+            return false;
+        }
+    }
+    for (int  i = 0; i < cantidadClientes; i++) {
+    	if (strcmp(clientes[i].cedula, cedula) == 0) {
+   			printf("\033[0;31mLa cedula ya ha sido asociada a otro cliente\033[0m\n");
+    		return false;
+    	}
+    }
+    return true;
 }
 
 bool validarNombre(char* nombre) {
-	if (nombre == NULL || strlen(nombre) == 0) {
-		printf("El nombre no puede estar vacío\n");
-		return false;
-	}
-	for (int i = 0; nombre[i] != '\0'; i++) {
-		if (!isalpha(nombre[i] && nombre[i] != ' ')) {
-			printf("El nombre solo puede contener letras y espacios");
-			return false;
-		}
-	}
-	return true;
+    if (nombre == NULL || strlen(nombre) == 0) {
+        printf("\033[0;31mEl nombre no puede estar vacío\033[0m\n");
+        return false;
+    }
+    for (int i = 0; nombre[i] != '\0'; i++) {
+        if (!isalpha(nombre[i]) && nombre[i] != ' ') {
+            printf("\033[0;31mEl nombre solo puede contener letras y espacios\033[0m\n");
+            return false;
+        }
+    }
+    return true;
 }
 
-void guardarClientes(void) {
+void guardarClientes() {
 	FILE* archivo = fopen("store/clientes.json", "w");
 	fprintf(archivo, "[\n");
 	for (int i = 0; i < cantidadClientes; i++) {
@@ -165,48 +256,6 @@ void registrarClientes(char* nombre, char* cedula, char* telefono) {
 }
 
 
-void registrarCliente(void) {
-	
-    char nombre[100];
-    char cedula[100];
-    char telefono[100];
-    bool datosValidos = false;
-    
-    printf("\n=== REGISTRAR NUEVO CLIENTE ===\n");
-
-    while (!datosValidos) {
-
-        do {
-            printf("Ingrese el nombre del cliente: ");
-            fgets(nombre, sizeof(nombre), stdin);
-            if ((strlen(nombre) > 0) && (nombre[strlen(nombre) - 1] == '\n')) {
-                nombre[strlen(nombre) - 1] = '\0';
-            }
-        } while (!validarNombre(nombre));
-        
-   
-        do {
-            printf("Ingrese el numero de cedula (9 digitos): ");
-            fgets(cedula, sizeof(cedula), stdin);
-            if ((strlen(cedula) > 0) && (cedula[strlen(cedula) - 1] == '\n')) {
-                cedula[strlen(cedula) - 1] = '\0';
-            }
-        } while (!validarCedula(cedula));
-        
-
-        do {
-            printf("Ingrese el numero de telefono (8 digitos): ");
-            fgets(telefono, sizeof(telefono), stdin);
-            if ((strlen(telefono) > 0) && (telefono[strlen(telefono) - 1] == '\n')) {
-                telefono[strlen(telefono) - 1] = '\0';
-            }
-        } while (!validarTelefono(telefono));
-        
-        datosValidos = true;
-    }
-    
-    registrarClientes(nombre, cedula, telefono);
-}
 
 
 

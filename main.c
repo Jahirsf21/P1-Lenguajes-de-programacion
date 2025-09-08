@@ -30,7 +30,7 @@ int admin(){
         {
         case 1:
             CLEAR;
-            printf("Registrar Libros\n");
+            registrarCliente();
             break;
         case 2:
             CLEAR;
@@ -38,7 +38,6 @@ int admin(){
             break;
         case 3:
             CLEAR;
-            limpiarBuffer();
             registrarCliente();
             break;
         case 4:
@@ -66,6 +65,50 @@ int admin(){
         admin();
     }
 }
+
+void registrarCliente() {
+    
+    char nombre[100];
+    char cedula[100];
+    char telefono[100];
+    bool datosValidos = false;
+    
+    printf("=== REGISTRAR NUEVO CLIENTE ===\n");
+
+    while (!datosValidos) {
+
+        do {
+            printf("Ingrese el nombre del cliente: ");
+            fgets(nombre, sizeof(nombre), stdin);
+            if ((strlen(nombre) > 0) && (nombre[strlen(nombre) - 1] == '\n')) {
+                nombre[strlen(nombre) - 1] = '\0';
+            }
+        } while (!validarNombre(nombre));
+        
+   
+        do {
+            printf("Ingrese el numero de cedula (9 digitos): ");
+            fgets(cedula, sizeof(cedula), stdin);
+            if ((strlen(cedula) > 0) && (cedula[strlen(cedula) - 1] == '\n')) {
+                cedula[strlen(cedula) - 1] = '\0';
+            }
+        } while (!validarCedula(cedula));
+        
+
+        do {
+            printf("Ingrese el numero de telefono (8 digitos): ");
+            fgets(telefono, sizeof(telefono), stdin);
+            if ((strlen(telefono) > 0) && (telefono[strlen(telefono) - 1] == '\n')) {
+                telefono[strlen(telefono) - 1] = '\0';
+            }
+        } while (!validarTelefono(telefono));
+        
+        datosValidos = true;
+    }
+    
+    registrarClientes(nombre, cedula, telefono);
+}
+
 
 int general(){
     printf("Menú de opciones generales:\n");

@@ -27,10 +27,6 @@ int largoCadena(const char *cadena){
 }
 
 //Funciones de utilidad
-void limpiarBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
 
 void mostrarLibro(const Libro *libro){
     printf("Código: %s\n", libro->codigo);
