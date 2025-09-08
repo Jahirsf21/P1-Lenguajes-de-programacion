@@ -1,7 +1,6 @@
 #include "headers/libros.h"
 #include "headers/pedidos.h"
 #include "headers/clientes.h"
-#include "headers/locales.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
