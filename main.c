@@ -13,7 +13,6 @@ void limpiarBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-
 int admin(){
     printf("Menú de opciones administrativas:\n");
     printf("1- Registrar Libros\n");
@@ -30,7 +29,7 @@ int admin(){
         {
         case 1:
             CLEAR;
-            registrarCliente();
+            menuRegistrarLibro();
             break;
         case 2:
             CLEAR;
@@ -66,6 +65,73 @@ int admin(){
     }
 }
 
+
+void menuRegistrarLibro() {
+    char titulo[100];    
+    char autor[100];    
+    char codigo[100];   
+    float precio;
+    int stock;
+    bool datosValidos = false;
+    
+    printf("=== REGISTRAR NUEVO LIBRO ===\n");  
+    
+    while (!datosValidos) {
+        // Solicitar título
+        do {
+            printf("Ingrese el titulo del libro: ");
+            fgets(titulo, sizeof(titulo), stdin);
+            if ((strlen(titulo) > 0) && (titulo[strlen(titulo)-1] == '\n')) {
+                titulo[strlen(titulo)-1] = '\0';
+            }
+        } while(!validarTitulo(titulo));
+        
+        // Solicitar autor
+        do {
+            printf("Ingrese el autor del libro: "); 
+            fgets(autor, sizeof(autor), stdin);
+            if ((strlen(autor) > 0) && (autor[strlen(autor)-1] == '\n')) {
+                autor[strlen(autor)-1] = '\0';
+            }
+        } while(!validarAutor(autor));
+        
+        // Solicitar código
+        do {
+            printf("Ingrese el codigo del libro: ");  
+            fgets(codigo, sizeof(codigo), stdin);
+            if ((strlen(codigo) > 0) && (codigo[strlen(codigo)-1] == '\n')) {
+                codigo[strlen(codigo)-1] = '\0';
+            }
+        } while(!validarCodigo(codigo));
+
+        do {
+            printf("Ingrese el precio del libro: ");
+            if (scanf("%f", &precio) != 1) {
+                printf("\033[0;31mPor favor ingrese un precio válido\033[0m\n");
+                limpiarBuffer();
+                precio = -1; 
+            } else {
+                limpiarBuffer();
+            }
+        } while(!validarPrecio(precio));
+        
+        do {
+            printf("Ingrese la cantidad en stock: ");
+            if (scanf("%d", &stock) <= 0) {
+                printf("\033[0;31mPor favor ingrese una cantidad válida (Mayor a 0)\033[0m\n");
+                limpiarBuffer();
+                stock = -1; 
+            } else {
+                limpiarBuffer();
+            }
+        } while(!validarStock(stock));
+        
+        datosValidos = true;
+    }
+    registrarLibro(titulo, autor, codigo, precio, stock);
+}
+
+
 void registrarCliente() {
     
     char nombre[100];
@@ -85,7 +151,6 @@ void registrarCliente() {
             }
         } while (!validarNombre(nombre));
         
-   
         do {
             printf("Ingrese el numero de cedula (9 digitos): ");
             fgets(cedula, sizeof(cedula), stdin);
@@ -94,7 +159,6 @@ void registrarCliente() {
             }
         } while (!validarCedula(cedula));
         
-
         do {
             printf("Ingrese el numero de telefono (8 digitos): ");
             fgets(telefono, sizeof(telefono), stdin);
@@ -105,7 +169,6 @@ void registrarCliente() {
         
         datosValidos = true;
     }
-    
     registrarClientes(nombre, cedula, telefono);
 }
 
@@ -126,7 +189,6 @@ int general(){
             }
             char respuesta = input[0];             
                                    
-
             if(respuesta == '1') {
                 CLEAR;
                 printf("Catalogo");
@@ -146,7 +208,6 @@ int general(){
             printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
         }
     }
-
 
 
 int main() {
@@ -169,7 +230,6 @@ int main() {
             }
             char respuesta = input[0];             
                       
-
             if(respuesta == '1') {
                 CLEAR;
                 admin();
