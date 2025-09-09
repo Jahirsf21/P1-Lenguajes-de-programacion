@@ -1,6 +1,7 @@
 #include "headers/libros.h"
 #include "headers/pedidos.h"
 #include "headers/clientes.h"
+#include "headers/local.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -40,6 +41,7 @@ void menuLibros() {
                 }
                 break;
             case '3':
+                CLEAR;
                 return;
             default:
                 printf("\033[0;31mOpción no válida.\033[0m\n");
@@ -243,14 +245,14 @@ int admin(){
         default:
             CLEAR;
             printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
-            admin();
+            continue;
             break;
         }
     } else{
         system("clear");
         limpiarBuffer();
         printf("\033[0;31mEntrada incorrecta. Por favor, ingresa un número\033[0m\n");
-        admin();
+        continue;
     }
 }
 }
@@ -272,6 +274,8 @@ int general(){
             
             if(strlen(input) == 0) {
                 CLEAR;
+                printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+                continue;
             }
             char respuesta = input[0];             
                                    
@@ -296,12 +300,53 @@ int general(){
     }
 }
 
+int login() {
+    CLEAR;
+    char usuario[100];
+    char password[100];
+
+    while (true) {
+        printf("Ingrese el nombre de usuario (r para regresar): ");
+        if (!fgets(usuario, sizeof(usuario), stdin)) continue;
+        usuario[strcspn(usuario, "\n")] = 0;
+
+        if (strcmp(usuario, "r") == 0) {
+            CLEAR;
+            return 0; 
+        }
+        if (strlen(usuario) == 0) {
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa un usuario válido\033[0m\n");
+            continue;
+        }
+
+        printf("Ingrese la contraseña: ");
+        if (!fgets(password, sizeof(password), stdin)) continue;
+        password[strcspn(password, "\n")] = 0;
+
+        if (strlen(password) == 0) {
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una contraseña válida\033[0m\n");
+            continue;
+        }
+
+        if (comprobarUsuario(usuario, password)) {
+            return 1; 
+        } else {
+            CLEAR;
+            printf("\033[0;31mNombre de usuario o contraseña incorrecta.\033[0m\n");
+        }
+    }
+}
+
+
 int main() {
-    
-    system("clear");
+    CLEAR;
     cargarClientes();
     cargarLibros();
     cargarPedidos();
+    cargarLocal();
+   
     while(true){
         printf("Bienvenido al sistema de Librería\n");
         printf("Menu principal:\n");
@@ -316,13 +361,14 @@ int main() {
             
             if(strlen(input) == 0) {
                 CLEAR;
+                printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
                 continue;
             }
             char respuesta = input[0];             
                       
             if(respuesta == '1') {
                 CLEAR;
-                admin();
+                if(login()) CLEAR; admin();
             } else if(respuesta == '2') {
                 CLEAR;
                 general();

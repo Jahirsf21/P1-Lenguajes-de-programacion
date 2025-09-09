@@ -14,14 +14,16 @@ typedef struct local {
     char* horarioInicio;
     char* horarioFin;
     int sigPedido;
-    Usuario* usuario;
+    Usuario* usuarios;
     int cantUsuarios;
 } Local;
 
 extern Local *local;
 
 void cargarLocal();
-
+bool comprobarUsuario(char* usuario, char* password);
+void verTodosLosUsuarios();
+void toStringUsuario(Usuario *usuario);
 
 
 #endif

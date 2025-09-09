@@ -31,6 +31,8 @@ void cargarLocal() {
     int leyendoUsuario = 0;  
 
     local = malloc(sizeof(Local));
+    local->usuarios = NULL;       
+    local->cantUsuarios = 0;      
 
     while (fgets(buffer, sizeof(buffer), archivo) != NULL) {
         if (strstr(buffer, "\"nombre\":")) {
@@ -99,4 +101,27 @@ void cargarLocal() {
     }
 
     fclose(archivo);
+}
+
+void toStringUsuario(Usuario* usuario){
+    printf("Nombre de Usuario: %s\n", usuario->nombre);
+    printf("Contraseña: %s\n", usuario->password);
+}
+
+void verTodosLosUsuarios(){
+    for(int i =0; i<local->cantUsuarios; i++){
+        printf("Usuario %d\n", i+1);
+        toStringUsuario(&local->usuarios[i]);
+    }
+}
+
+
+bool comprobarUsuario(char* usuario, char* password){
+    for(int i =0; i<local->cantUsuarios; i++){
+        
+        if(strcmp(local->usuarios[i].nombre, usuario) == 0){
+            if(strcmp(local->usuarios[i].password, password) == 0) return true;
+        }
+    }
+    return false;
 }
