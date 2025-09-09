@@ -15,6 +15,7 @@ typedef struct local {
     char* horarioFin;
     int sigPedido;
     Usuario* usuario;
+    int cantUsuarios;
 } Local;
 
 extern Local *local;
