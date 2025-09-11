@@ -708,3 +708,75 @@ void menuModificarPedido() {
     } while (pedidoAModificar == NULL);
     modificarPedido(pedidoAModificar);
 }
+
+int obtenerUltimoAnio(){
+    int res=0;
+    int temp;
+    for(int i =0; i<cantidadPedidos; i++){
+        char anio[4];
+        strncpy(anio, pedidos[i].fecha + 6, 4);
+        anio[4] = '\0';
+        temp = atoi(anio);  
+        if (temp>res){
+            res=temp;
+        }
+    }
+}
+
+
+
+
+//declararlos
+
+int obtenerPrimerAnio(){
+    int res=9999;
+    int temp;
+    for(int i =0; i<cantidadPedidos; i++){
+        char anio[4];
+        strncpy(anio, pedidos[i].fecha + 6, 4);
+        anio[4] = '\0';
+        temp = atoi(anio);  
+        if (temp<res){
+            res=temp;
+        }
+    }
+}
+
+
+float obtenerTotalMesAnio(int mes, int anio){
+    int tempMes;
+    int tempAnio;
+    int res;
+    for (int i=0; i< cantidadPedidos; i++){
+        char cAnio[4];
+        strncpy(cAnio, pedidos[i].fecha + 6, 4);
+        cAnio[4] = '\0';
+        tempAnio = atoi(cAnio);
+        char cMes[2];
+        strncpy(cMes, pedidos[i].fecha + 3, 2);
+        cMes[2] ='\0';
+        tempMes = atoi(cMes);
+        if(tempMes==mes && tempAnio==anio){
+            res+= pedidos[i].total;
+        }
+    }
+    return res;
+}
+float obtenerTotalAnio(int anio){
+    int res;
+    for(int i=1; i>=12; i++){
+        res+=obtenerTotalMesAnio(i, anio);
+    }
+    return res;
+}
+
+float obtenerTotalGeneral(){
+    int primero = obtenerPrimerAnio();
+    int ultimo = obtenerUltimoAnio();
+    int res;
+    for(int i = primero; i<=ultimo; i++){
+        res+= obtenerTotalAnio(i);
+    }
+}
+
+

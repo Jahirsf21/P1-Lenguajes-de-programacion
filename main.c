@@ -346,7 +346,6 @@ int main() {
     cargarLibros();
     cargarPedidos();
     cargarLocal();
-   
     while(true){
         printf("Bienvenido al sistema de Librería\n");
         printf("Menu principal:\n");

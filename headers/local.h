@@ -24,6 +24,8 @@ void cargarLocal();
 bool comprobarUsuario(char* usuario, char* password);
 void verTodosLosUsuarios();
 void toStringUsuario(Usuario *usuario);
+void toStringLocal();
+void totalPedidos();
 
 
 #endif

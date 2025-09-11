@@ -58,6 +58,9 @@ void cargarLocal() {
             cedula[finStr - inicioStr] = '\0';
             local->cedulaJuridica = strdup(cedula);
         }
+        else if (strstr(buffer, "\"horario\"")) {
+            
+        }
         else if (strstr(buffer, "\"inicio\":")) {
             char* inicioStr = strchr(buffer, ':') + 3;
             char* finStr = strrchr(buffer, '\"');
@@ -72,6 +75,7 @@ void cargarLocal() {
             fin[finStr - inicioStr] = '\0';
             local->horarioFin = strdup(fin);
         }
+
         else if (strstr(buffer, "\"siguiente\":")) {
             char* inicioStr = strchr(buffer, ':') + 1;
             siguiente = atoi(inicioStr);
@@ -103,6 +107,15 @@ void cargarLocal() {
     fclose(archivo);
 }
 
+void toStringLocal(){
+    printf("Nombre del local: %s\n", local->nombre);
+    printf("Número de teléfono: %s\n", local->telefono);
+    printf("Cédula Jurídica: %s\n", local->cedulaJuridica);
+    printf("Horario: De %s a %s\n", local->horarioInicio, local->horarioFin);
+    printf("Usuarios:\n");
+    verTodosLosUsuarios();
+}
+
 void toStringUsuario(Usuario* usuario){
     printf("Nombre de Usuario: %s\n", usuario->nombre);
     printf("Contraseña: %s\n", usuario->password);
@@ -124,4 +137,21 @@ bool comprobarUsuario(char* usuario, char* password){
         }
     }
     return false;
+}
+
+
+
+void totalPedidos(){
+    char* meses[12] = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    int primero = obtenerPrimerAnio();
+    int ultimo = obtenerUltimoAnio();
+    for(int i = primero; i<=ultimo; i++){
+        printf("Año : %d\n", i);
+        printf("Desglose por mes: \n");
+        for(int j =1; j<=12; j++){
+            printf("%s : %f \n", meses[j-1], obtenerTotalMesAnio(j, i));
+        }
+        printf("Total Año: %f", obtenerTotalAnio(i));
+    }
+    prinf("Total General: %f", obtenerTotal());
 }

@@ -48,5 +48,10 @@ void cargarPedidos();
 //Validaciones
 bool validarFecha(char* fecha);
 
-
+//Funciones para obtener información para las estadisticas 
+int obtenerUltimoAnio();
+int obtenerPrimerAnio();
+float obtenerTotalMesAnio(int mes, int anio);
+float obtenerTotalAnio(int anio);
+float obtenerTotal();
 #endif
