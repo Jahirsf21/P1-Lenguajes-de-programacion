@@ -153,5 +153,49 @@ void totalPedidos(){
         }
         printf("Total Año: %f", obtenerTotalAnio(i));
     }
-    prinf("Total General: %f", obtenerTotal());
+    prinf("Total General: %f", obtenerTotal()); 
+}
+
+
+Cliente* ordenarClientesCantPedidos(){
+    Cliente* clientesTemp= malloc(cantidadClientes*sizeof(Cliente));
+    memcpy(clientesTemp, clientes, cantidadClientes * sizeof(Cliente));
+    Cliente temp;
+    if(cantidadClientes==2){
+        if(obtenerCantPedidosCliente(clientesTemp)<obtenerCantPedidosCliente(clientesTemp+1)){
+            temp = *(clientesTemp+1);
+            *(clientesTemp+1)= *(clientesTemp);
+            *(clientesTemp)=temp;
+        }
+    } else{
+        bool cambio=true;
+        while(cambio){
+            cambio=false;
+            for(int i=0;i<cantidadClientes-1;i++){
+                if(obtenerCantPedidosCliente(clientesTemp+i)<obtenerCantPedidosCliente(clientesTemp+i+1)){
+                    temp = *(clientesTemp+i);
+                    *(clientesTemp+i)= *(clientesTemp+i+1);
+                    *(clientesTemp+i+1)=temp;
+                    cambio=true;
+                }
+            }
+        }
+    }
+    
+    return clientesTemp;
+}
+
+int ClientesConMasPedidos(){
+
+    if(cantidadClientes==0){
+        printf("No hay clientes registrados en el sistema.");
+    }
+    else {
+        printf("Clientes con mas pedidos:\n");
+        Cliente* clientestemp= ordenarClientesCantPedidos();
+        for (int i=0;i<cantidadClientes;i++){
+            printf("%i- %s: %i pedidos\n", i+1, *(clientestemp+i)->nombre, obtenerCantPedidosCliente(clientestemp+i));
+        }
+        
+    }
 }

@@ -780,3 +780,14 @@ float obtenerTotalGeneral(){
 }
 
 
+int cantPedidosCliente(Cliente* cliente){
+    int res;
+    for(int i=0; i<cantidadPedidos; i++){
+        if ((pedidos+i)->cliente == cliente){
+            res++;
+        }
+    }
+    return res;
+}
+
+

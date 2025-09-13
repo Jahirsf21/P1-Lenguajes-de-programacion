@@ -26,6 +26,7 @@ void verTodosLosUsuarios();
 void toStringUsuario(Usuario *usuario);
 void toStringLocal();
 void totalPedidos();
+int ClientesConMasPedidos();
 
 
 #endif

@@ -54,4 +54,5 @@ int obtenerPrimerAnio();
 float obtenerTotalMesAnio(int mes, int anio);
 float obtenerTotalAnio(int anio);
 float obtenerTotal();
+int obtenerCantPedidosCliente(Cliente *cliente);
 #endif
