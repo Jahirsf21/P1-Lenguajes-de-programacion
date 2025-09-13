@@ -820,21 +820,27 @@ bool yaEsta(char** arr, char* autor, int len){
     return false;
 }
 
-char** todosLosAutores(int anio){
-    char** autores = malloc(200);
-    int temp=0;
-    for(int i=0; i<cantidadPedidos; i++){
-        for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
-            char* actual = ((pedidos + i)->detalles + j)->libro->autor;
-            if(!yaEsta(autores,actual,temp)){
-                *(autores+temp) =actual;
-                temp++;
-            }
+char** todosLosAutores(int anio, int* cantidadAutores) {
+    char** autores = NULL;  
+    int count = 0;
+
+    for (int i = 0; i < cantidadPedidos; i++) {
+        for (int j = 0; j < ((pedidos + i)->cantidadDetalles); j++) {
+            char* actual = *(((pedidos + i)->detalles) + j)->libro->autor;
+
             
+            if (!yaEsta(autores, actual, count)) {
+                autores = realloc(autores, (count + 1) * sizeof(char*));
+                *(autores + count) = actual;
+                count++;
+            }
         }
     }
+
+    *cantidadAutores = count;
     return autores;
 }
+
 
 int ventasAutorAnio(char* autor, int anio){
     int res;

@@ -274,6 +274,32 @@ Cliente* ordenarLibrosCantVentasAnio(int anio){
     return librosTemp;
 }
 
+char** ordenarAutoresCantVentasAnio(int anio, int* cantidadAutores) {
+    int cantidad;
+    char** autores = todosLosAutores(anio, &cantidad);
+    if (cantidad <= 1) {
+        *cantidadAutores = cantidad;
+        return autores;
+    }
+    bool cambio = true;
+    while (cambio) {
+        cambio = false;
+        for (int i = 0; i < cantidad - 1; i++) {
+            int ventas1 = cantVentasAutorAnio(*(autores + i), anio);
+            int ventas2 = cantVentasAutorAnio(*(autores + i + 1), anio);
+            if (ventas1 < ventas2) {
+                char* temp = *(autores + i);
+                *(autores + i) = *(autores + i + 1);
+                *(autores + i + 1) = temp;
+                cambio = true;
+            }
+        }
+    }
+    *cantidadAutores = cantidad;
+    return autores;
+}
+
+
 int LibrosMasVendidosAnio(int anio){
     if(stockLibros==0) printf("No hay libros registrados");
     else{
@@ -338,9 +364,10 @@ int autorConMasVentasAnio() {
             }
 
             printf("Autores con más ventas en %d:\n", anio);
-            char **autores = todosLosAutores(anio);
+            int cantAutores;
+            char **autores = ordenarAutoresCantVentasAnio(anio,cantAutores);
             for (int i = 0; i < cantidadClientes; i++) {
-                printf("%i- %s: %i pedidos\n", i + 1, *(autores + i), ventasAutorAnio(autores + i, anio));
+                printf("%i- %s: %i ventas\n", i + 1, *(autores + i), ventasAutorAnio(autores + i, anio));
             } 
         }
     }

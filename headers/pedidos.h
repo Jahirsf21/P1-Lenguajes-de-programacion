@@ -57,6 +57,6 @@ float obtenerTotal();
 int obtenerCantPedidosCliente(Cliente *cliente);
 int cantVentasLibro(Libro* libro);
 int cantVentasLibroAnio(Libro* libro, int anio);
-char** todosLosAutores(int anio);
+char** todosLosAutores(int anio, int cantidadAutores);
 int ventasAutorAnio(char* autor, int anio);
 #endif
