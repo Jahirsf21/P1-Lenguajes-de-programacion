@@ -55,4 +55,8 @@ float obtenerTotalMesAnio(int mes, int anio);
 float obtenerTotalAnio(int anio);
 float obtenerTotal();
 int obtenerCantPedidosCliente(Cliente *cliente);
+int cantVentasLibro(Libro* libro);
+int cantVentasLibroAnio(Libro* libro, int anio);
+char** todosLosAutores(int anio);
+int ventasAutorAnio(char* autor, int anio);
 #endif

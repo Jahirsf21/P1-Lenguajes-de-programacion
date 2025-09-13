@@ -790,4 +790,65 @@ int cantPedidosCliente(Cliente* cliente){
     return res;
 }
 
+int cantVentasLibro(Libro* libro){
+    int res;
+    for(int i=0; i<cantidadPedidos; i++){
+        for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
+            if((pedidos+i)->detalles->libro==libro) res++;
+        }
+    }
+}
+
+int cantVentasLibroAnio(Libro* libro, int anio){
+    int res;
+    int temp;
+    for(int i=0; i<cantidadPedidos; i++){
+        char anio[4];
+        strncpy(anio, pedidos[i].fecha + 6, 4);
+        anio[4] = '\0';
+        temp= atoi(anio);  
+        for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
+            if((((pedidos+i)->detalles + j)->libro == libro) && temp == anio) res++;
+        }
+    }
+}
+
+bool yaEsta(char** arr, char* autor, int len){
+    for(int i=0; i<len;i++){
+        if(*(arr+i)==autor) return true;
+    }
+    return false;
+}
+
+char** todosLosAutores(int anio){
+    char** autores = malloc(200);
+    int temp=0;
+    for(int i=0; i<cantidadPedidos; i++){
+        for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
+            char* actual = ((pedidos + i)->detalles + j)->libro->autor;
+            if(!yaEsta(autores,actual,temp)){
+                *(autores+temp) =actual;
+                temp++;
+            }
+            
+        }
+    }
+    return autores;
+}
+
+int ventasAutorAnio(char* autor, int anio){
+    int res;
+    int temp;
+    for(int i=0; i<cantidadPedidos; i++){
+        char anio[4];
+        strncpy(anio, pedidos[i].fecha + 6, 4);
+        anio[4] = '\0';
+        temp= atoi(anio); 
+        for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
+            char* actual = ((pedidos + i)->detalles + j)->libro->autor;
+            if(!strcmp(autor, actual) && temp==anio) res++;
+        }
+    }
+    return res;
+}
 

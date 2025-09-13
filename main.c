@@ -164,7 +164,7 @@ int menuEstadisticas(){
         {
         case '1':
             CLEAR;
-            printf("Total de ventas por mes-año\n");
+            
             totalPedidos();
             break;
         case '2':
