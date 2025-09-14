@@ -56,6 +56,8 @@ void eliminarCliente(int indice) {
     
     printf("\033[0;32mCliente eliminado exitosamente\033[0m\n");
     guardarClientes();
+    printf("Presiona enter para continuar...");
+    getchar();
 }
 
 void eliminarClientePorCedula(char* cedula) {
@@ -267,27 +269,32 @@ void registrarClientes(char* nombre, char* cedula, char* telefono) {
 
 	cantidadClientes++;
 	printf("El cliente ha sido registrado!\n");
+    char* cliente = clienteToString(&clientes[cantidadClientes-1]);
+    printf("%s\n", cliente);
 	guardarClientes();
+    printf("Presiona enter para continuar...\n");
+    getchar();
 }
 
 
-
 void menuRegistrarCliente() {
-    
+    CLEAR;
     char nombre[100];
     char cedula[100];
     char telefono[100];
     bool datosValidos = false;
-    
     printf("=== REGISTRAR NUEVO CLIENTE ===\n");
-
+    mostrarTodosLosClientes();
     while (!datosValidos) {
 
         do {
-            printf("Ingrese el nombre del cliente: ");
+            printf("Ingrese el nombre del cliente (c para cancelar): ");
             fgets(nombre, sizeof(nombre), stdin);
             if ((strlen(nombre) > 0) && (nombre[strlen(nombre) - 1] == '\n')) {
                 nombre[strlen(nombre) - 1] = '\0';
+            }
+            if (strcmp(nombre,"c")==0 || strcmp(nombre,"C") == 0) {
+                return;
             }
         } while (!validarNombre(nombre));
         
@@ -309,13 +316,13 @@ void menuRegistrarCliente() {
         
         datosValidos = true;
     }
+    CLEAR;
     registrarClientes(nombre, cedula, telefono);
 }
 
 
-
-
 void menuEliminarCliente() {
+    CLEAR;
     mostrarTodosLosClientes();
     char cedula[100]; 
     printf("=== ELIMINAR CLIENTE ===\n");  
@@ -359,6 +366,7 @@ void menuEliminarCliente() {
             }
             break;
         }
+        CLEAR;
         eliminarClientePorCedula(cedula);
         break; 
     }

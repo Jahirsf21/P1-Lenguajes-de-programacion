@@ -79,6 +79,7 @@ void menuClientes() {
                 }
                 break;
             case '3':
+                CLEAR;
                 return;
             default:
                 printf("\033[0;31mOpción no válida.\033[0m\n");
@@ -236,7 +237,7 @@ int admin(){
             break;
         case '2': 
             CLEAR;
-            menuCargaInventario();
+            menuCargarInventario();
             break;
         case '3':
             CLEAR;

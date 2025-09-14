@@ -21,6 +21,7 @@ void mostrarLibrosPorAutor(char* autor);
 //Funciones para el registro, eliminación, cargado y guardado de los libros
 void menuRegistrarLibro();
 void menuAgregarStockLibro();
+void menuCargarInventario();
 void menuEliminarLibro();
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock);
 void cargarLibros();
