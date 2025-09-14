@@ -1,6 +1,8 @@
 #ifndef LOCAL_H
 #define LOCAL_H
-
+#include "../headers/clientes.h"
+#include "../headers/pedidos.h"
+#include "../headers/local.h"
 typedef struct usuario
 {
     char* nombre;
@@ -25,9 +27,10 @@ bool comprobarUsuario(char* usuario, char* password);
 void verTodosLosUsuarios();
 void toStringUsuario(Usuario *usuario);
 void toStringLocal();
-void totalPedidos();
+int totalPedidos();
 int ClientesConMasPedidos();
 int LibrosMasVendidos();
-
+int autorConMasVentasAnio();
+int LibrosMasVendidosMenu();
 
 #endif

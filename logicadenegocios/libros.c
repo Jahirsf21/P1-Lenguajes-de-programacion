@@ -54,11 +54,9 @@ void mostrarLibrosPorAutor(char* autor) {
     printf("=== LIBROS FILTRADOS POR AUTOR: '%s' ===\n", autor);
     int encontrados = 0;
     for (int i = 0; i < stockLibros; i++) {
-        //strstr busca si el nombre del autor del libro contiene el texto buscado
         if (strstr(libros[i].autor, autor) != NULL) {
             char* mostrarLibros = libroToString(&libros[i]);
             if (mostrarLibros != NULL) {
-                //imprimimos la línea completa del libro
                 printf("%s\n", mostrarLibros);
                 free(mostrarLibros);
                 encontrados++;
