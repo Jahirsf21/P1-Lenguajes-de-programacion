@@ -124,30 +124,40 @@ void menuPedidos() {
             case '4':
                 CLEAR;
                 mostrarTodosLosPedidos();
-                printf("\nPresione Enter para continuar...");
+                printf("\nPresione enter para regresar...");
                 getchar();
                 break;
             case '5': {
                 CLEAR;
-                mostrarTodosLosPedidos();
-                char fecha[20];
-                printf("Ingrese la fecha a buscar (dd/mm/aaaa) (o r para regresar): ");
-                fgets(fecha, sizeof(fecha), stdin);
-                fecha[strcspn(fecha, "\n")] = 0;
-                if (strcmp(fecha, "r") == 0 || strcmp(fecha, "R") == 0 ){
-                    menuPedidos();
-                } else {
-                    if (validarFecha(fecha)) {
-                        mostrarPedidoPorFecha(fecha);
+                if (stockLibros > 0) {
+                    mostrarTodosLosPedidos();
+                    char fecha[20];
+                    printf("Ingrese la fecha a buscar (dd/mm/aaaa) (o r para regresar): ");
+                    fgets(fecha, sizeof(fecha), stdin);
+                    fecha[strcspn(fecha, "\n")] = 0;
+                    if (strcmp(fecha, "r") == 0 || strcmp(fecha, "R") == 0 ){
+                        menuPedidos();
                     } else {
-                        printf("\033[0;31mFormato de fecha no válido.\033[0m\n");
+                        if (validarFecha(fecha)) {
+                            mostrarPedidoPorFecha(fecha);
+                        } else {
+                            printf("\033[0;31mFormato de fecha no válido.\033[0m\n");
+                        }
+                        printf("\nPresione Enter para continuar...");
+                        getchar();
+                        break;
                     }
-                    printf("\nPresione Enter para continuar...");
+                } else {
+                    CLEAR;
+                    printf("\033[0;31mNo hay pedidos registrados.\033[0m\n");
+                    printf("Presiona enter para regresar...");
                     getchar();
-                    break;
+                    CLEAR;
                 }
+
             }
             case '6':
+                CLEAR;
                 return; 
             default:
                 printf("\033[0;31mOpción no válida.\033[0m\n");

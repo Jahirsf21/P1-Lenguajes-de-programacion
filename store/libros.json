@@ -1,2 +1,16 @@
 [
+    {
+        "titulo": "tUN TUN SAHUR",
+        "autor": "tun Tun",
+        "codigo": "001",
+        "precio": 300241.00,
+        "stock": 0
+    },
+    {
+        "titulo": "TOTko",
+        "autor": "tun",
+        "codigo": "004",
+        "precio": 243141.00,
+        "stock": 30
+    }
 ]

@@ -348,13 +348,15 @@ void actualizarMontoPedido(Pedido* pedido) {
 void menuEliminarPedido() {
     if (cantidadPedidos == 0) {
         printf("\033[0;31mNo hay pedidos registrados para eliminar.\033[0m\n");
+        printf("Presione enter para regresar...");
+        getchar();
         return;
     }
     
     mostrarTodosLosPedidos();
     
     char codigoPedido[100];
-    printf("\nIngrese el código del pedido que desea eliminar (o 'c' para cancelar): ");
+    printf("\nIngrese el código del pedido que desea eliminar (o c para cancelar): ");
     fgets(codigoPedido, sizeof(codigoPedido), stdin);
     codigoPedido[strcspn(codigoPedido, "\n")] = 0;
 
@@ -369,16 +371,21 @@ void menuEliminarPedido() {
 void menuCrearPedido() {
     if (stockLibros == 0) {
         printf("\033[0;31mNo hay libros en el catálogo. No se puede crear el pedido.\033[0m\n");
+        printf("Presione enter para regresar...");
+        getchar();
         return; 
     }
     if (cantidadClientes == 0) {
         printf("\033[0;31mNo hay clientes. No se puede crear el pedido.\033[0m\n");
+        printf("Presione enter para regresar...");
+        getchar();
         return; 
     }
 
     DetallePedido* carrito = NULL;
     int cantidadEnCarrito = 0;
     char opcion[10];
+    char inputBuffer[100]; 
 
     while (true) {
         CLEAR;
@@ -398,13 +405,18 @@ void menuCrearPedido() {
                        carrito[i].libro->precio * carrito[i].cantidad);
                 subtotalActual += carrito[i].libro->precio * carrito[i].cantidad;
             }
+            float impuestoActual = subtotalActual * IMPUESTO_VENTA;
+            float totalActual = subtotalActual + impuestoActual;
+            
             printf("---------------------------\n");
-            printf("Subtotal actual: %.2f\n", subtotalActual);
+            printf("Subtotal:          %.2f\n", subtotalActual);
+            printf("Impuesto (%.0f%%):    %.2f\n", IMPUESTO_VENTA * 100, impuestoActual);
+            printf("Total a pagar:     %.2f\n", totalActual);
         }
         printf("\n");
         printf("Seleccione una opción:\n");
         printf("1. Agregar libro al pedido\n");
-        printf("2. Eliminar libro del pedido\n");
+        printf("2. Eliminar/reducir libro del pedido\n");
         printf("3. Generar pedido\n");
         printf("4. Cancelar y salir\n");
         printf("Opción: ");
@@ -414,7 +426,6 @@ void menuCrearPedido() {
         if (strlen(opcion) != 1) {
             continue;
         }
-
         switch (opcion[0]) {
             case '1': {
                 CLEAR;
@@ -497,29 +508,105 @@ void menuCrearPedido() {
                     printf("\033[0;31mEl carrito está vacío, no hay nada que eliminar.\033[0m\n");
                     break;
                 }
-
-                int lineaAEliminar = 0;
+                int indiceEnCarrito = -1;
+                char codigoLibro[10];
                 do {
-                    printf("Ingrese el número de línea a eliminar (1 a %d): ", cantidadEnCarrito);
-                    if (scanf("%d", &lineaAEliminar) != 1) {
-                        printf("\033[0;31mError: Ingrese un número válido.\033[0m\n");
-                        lineaAEliminar = -1;
+                    printf("--- Carrito de Compras ---\n");
+                    for (int i = 0; i < cantidadEnCarrito; i++) {
+                       printf("  COD: %s, Titulo: %s, Cant: %d\n", carrito[i].libro->codigo, carrito[i].libro->titulo, carrito[i].cantidad);
                     }
-                    int c;
-                    while ((c = getchar()) != '\n' && c != EOF);
+                    printf("---------------------------\n");
+                    printf("Ingrese el código del libro a eliminar/modificar (o 'c' para cancelar): ");
+                    fgets(codigoLibro, sizeof(codigoLibro), stdin);
+                    codigoLibro[strcspn(codigoLibro, "\n")] = 0;
 
-                    if (lineaAEliminar < 1 || lineaAEliminar > cantidadEnCarrito) {
-                        printf("\033[0;31mNúmero de línea inválido. Intente de nuevo.\033[0m\n");
+                    if (strcmp(codigoLibro, "c") == 0 || strcmp(codigoLibro, "C") == 0) break;
+
+                    for (int i = 0; i < cantidadEnCarrito; i++) {
+                        if (strcmp(carrito[i].libro->codigo, codigoLibro) == 0) {
+                            indiceEnCarrito = i;
+                            break;
+                        }
                     }
-                } while (lineaAEliminar < 1 || lineaAEliminar > cantidadEnCarrito);
 
-                for (int i = lineaAEliminar - 1; i < cantidadEnCarrito - 1; i++) {
-                    carrito[i] = carrito[i + 1];
+                    if (indiceEnCarrito == -1) {
+                        printf("\033[0;31mError: El libro con código '%s' no está en el carrito. Intente de nuevo.\033[0m\n", codigoLibro);
+                    }
+                } while (indiceEnCarrito == -1);
+
+                if (indiceEnCarrito == -1) break;
+
+                printf("Libro seleccionado: %s (Cantidad actual: %d)\n", carrito[indiceEnCarrito].libro->titulo, carrito[indiceEnCarrito].cantidad);
+                printf("1. Eliminar todas las unidades del libro\n");
+                printf("2. Reducir la cantidad\n");
+                printf("Opción (o 'c' para cancelar): ");
+                fgets(inputBuffer, sizeof(inputBuffer), stdin);
+                inputBuffer[strcspn(inputBuffer, "\n")] = 0;
+
+                if (strcmp(inputBuffer, "c") == 0 || strcmp(inputBuffer, "C") == 0) {
+                     printf("Operación cancelada.\n");
+                     break;
                 }
-                cantidadEnCarrito--;
-                carrito = realloc(carrito, cantidadEnCarrito * sizeof(DetallePedido));
-                printf("\033[0;32mLibro eliminado del carrito.\033[0m\n");
 
+                if (strcmp(inputBuffer, "1") == 0) {
+                    for (int i = indiceEnCarrito; i < cantidadEnCarrito - 1; i++) {
+                        carrito[i] = carrito[i + 1];
+                    }
+                    cantidadEnCarrito--;
+                    if (cantidadEnCarrito > 0) {
+                        carrito = realloc(carrito, cantidadEnCarrito * sizeof(DetallePedido));
+                    } else {
+                        free(carrito);
+                        carrito = NULL;
+                    }
+                    printf("\033[0;32mLibro eliminado completamente del carrito.\033[0m\n");
+
+                } else if (strcmp(inputBuffer, "2") == 0) {
+                    int cantidadAReducir = 0;
+                    bool cantidadValida = false;
+                    do {
+                        printf("Cantidad actual: %d. ¿Cuántas unidades desea eliminar? (o 'c' para cancelar): ", carrito[indiceEnCarrito].cantidad);
+                        fgets(inputBuffer, sizeof(inputBuffer), stdin);
+                        inputBuffer[strcspn(inputBuffer, "\n")] = 0;
+
+                        if (strcmp(inputBuffer, "c") == 0 || strcmp(inputBuffer, "C") == 0) break;
+                        
+                        char* endptr;
+                        long tempCantidad = strtol(inputBuffer, &endptr, 10);
+
+                        if (endptr == inputBuffer || *endptr != '\0') {
+                            printf("\033[0;31mError: Ingrese un número válido.\033[0m\n");
+                            continue;
+                        }
+                        
+                        cantidadAReducir = (int)tempCantidad;
+                        if (cantidadAReducir <= 0 || cantidadAReducir > carrito[indiceEnCarrito].cantidad) {
+                            printf("\033[0;31mError: Cantidad a eliminar inválida. Debe ser entre 1 y %d.\033[0m\n", carrito[indiceEnCarrito].cantidad);
+                        } else {
+                            cantidadValida = true;
+                        }
+                    } while (!cantidadValida);
+                    
+                    if (cantidadValida) {
+                        carrito[indiceEnCarrito].cantidad -= cantidadAReducir;
+                        printf("\033[0;32m%d unidades de '%s' eliminadas. Quedan %d.\033[0m\n", cantidadAReducir, carrito[indiceEnCarrito].libro->titulo, carrito[indiceEnCarrito].cantidad);
+                        
+                        if (carrito[indiceEnCarrito].cantidad == 0) {
+                            for (int i = indiceEnCarrito; i < cantidadEnCarrito - 1; i++) {
+                                carrito[i] = carrito[i + 1];
+                            }
+                            cantidadEnCarrito--;
+                            if (cantidadEnCarrito > 0) {
+                                carrito = realloc(carrito, cantidadEnCarrito * sizeof(DetallePedido));
+                            } else {
+                                free(carrito);
+                                carrito = NULL;
+                            }
+                        }
+                    }
+                } else {
+                    printf("\033[0;31mOpción no válida.\033[0m\n");
+                }
                 break;
             }
             case '3': {
@@ -577,7 +664,6 @@ void menuCrearPedido() {
         }
     }
 }
-
 
 void modificarPedido(Pedido* pedidoAModificar) {
     char opcion[10];
@@ -704,13 +790,15 @@ void modificarPedido(Pedido* pedidoAModificar) {
 void menuModificarPedido() {
     if (cantidadPedidos == 0) {
         printf("\033[0;31mNo hay pedidos registrados para modificar.\033[0m\n");
+        printf("Presione enter para regresar...");
+        getchar();
         return;
     }
     mostrarTodosLosPedidos();
     char codigoPedido[100];
     Pedido* pedidoAModificar = NULL;
     do {
-        printf("\nIngrese el código del pedido que desea modificar (o 'c' para cancelar): ");
+        printf("\nIngrese el código del pedido que desea modificar (o c para cancelar): ");
         fgets(codigoPedido, sizeof(codigoPedido), stdin);
         codigoPedido[strcspn(codigoPedido, "\n")] = 0;
         if (strcmp(codigoPedido, "c") == 0) {
@@ -744,10 +832,6 @@ int obtenerUltimoAnio(){
     }
 }
 
-
-
-
-//declararlos
 
 int obtenerPrimerAnio(){
     int res=9999;
