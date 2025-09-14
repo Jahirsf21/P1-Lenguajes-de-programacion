@@ -30,6 +30,7 @@ void menuLibros() {
 
         switch (input[0]) {
             case '1':
+                CLEAR;
                 menuRegistrarLibro();
                 break;
             case '2':
@@ -38,6 +39,7 @@ void menuLibros() {
                     menuEliminarLibro();
                 } else {
                     printf("\033[0;31mNo hay libros registrados para eliminar.\033[0m\n");
+                    printf("Presionar enter para continuar...");
                     getchar();
                 }
                 break;

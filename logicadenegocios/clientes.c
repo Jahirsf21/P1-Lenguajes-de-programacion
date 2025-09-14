@@ -299,18 +299,24 @@ void menuRegistrarCliente() {
         } while (!validarNombre(nombre));
         
         do {
-            printf("Ingrese el numero de cedula (9 digitos): ");
+            printf("Ingrese el numero de cedula (9 digitos o c para cancelar): ");
             fgets(cedula, sizeof(cedula), stdin);
             if ((strlen(cedula) > 0) && (cedula[strlen(cedula) - 1] == '\n')) {
                 cedula[strlen(cedula) - 1] = '\0';
             }
+            if (strcmp(cedula,"c")==0 || strcmp(cedula,"C") == 0) {
+                return;
+            }
         } while (!validarCedula(cedula));
         
         do {
-            printf("Ingrese el numero de telefono (8 digitos): ");
+            printf("Ingrese el numero de telefono (8 digitos o c para cancelar): ");
             fgets(telefono, sizeof(telefono), stdin);
             if ((strlen(telefono) > 0) && (telefono[strlen(telefono) - 1] == '\n')) {
                 telefono[strlen(telefono) - 1] = '\0';
+            }
+            if (strcmp(telefono,"c")==0 || strcmp(telefono,"C") == 0) {
+                return;
             }
         } while (!validarTelefono(telefono));
         
