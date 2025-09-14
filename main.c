@@ -326,7 +326,7 @@ int general(){
                 mostrarTodosLosLibros();
             } else if(respuesta == '2') {
                 CLEAR;
-                printf("cliente");
+                mostrarTodosLosClientes();
             } else if(respuesta == '3') {
                 CLEAR;
                 return 0;
