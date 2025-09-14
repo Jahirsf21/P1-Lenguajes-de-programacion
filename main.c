@@ -236,7 +236,7 @@ int admin(){
             break;
         case '2': 
             CLEAR;
-            printf("carga de inventario\n");
+            menuCargaInventario();
             break;
         case '3':
             CLEAR;
