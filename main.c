@@ -155,7 +155,9 @@ void menuPedidos() {
 }
 
 int menuEstadisticas(){
-    printf("Menú de estadísticas:\n");
+    CLEAR;
+    while(true){
+        printf("Menú de estadísticas:\n");
     printf("1- Total de ventas\n");
     printf("2- Clientes con más pedidos\n");
     printf("3- Libros más vendidos\n");
@@ -177,18 +179,31 @@ int menuEstadisticas(){
             CLEAR;
             
             totalPedidos();
+            printf("\nPresione Enter para continuar...");
+            getchar();
+            CLEAR;
             break;
         case '2':
             CLEAR;
             ClientesConMasPedidos();
+            printf("\nPresione Enter para continuar...");
+            getchar();
+            CLEAR;
             break;
+            
         case '3':
             CLEAR;
             LibrosMasVendidosMenu();
+            printf("\nPresione Enter para continuar...");
+            getchar();
+            CLEAR;
             break;
         case '4':
             CLEAR;
             autorConMasVentasAnio();
+            printf("\nPresione Enter para continuar...");
+            getchar();
+            CLEAR;
             break;
         case '5':
             CLEAR;
@@ -206,6 +221,8 @@ int menuEstadisticas(){
         printf("\033[0;31mEntrada incorrecta. Por favor, ingresa un número\033[0m\n");
         menuEstadisticas();
     }
+    }
+    
 
 }
 
@@ -236,7 +253,7 @@ int admin(){
             break;
         case '2':
             CLEAR;
-            cargaInventario();
+            //cargaInventario();
             break;
         case '3':
             CLEAR;
@@ -324,7 +341,7 @@ int login() {
 
         if (strcmp(usuario, "r") == 0 || strcmp(usuario, "R") == 0) {
             CLEAR;
-            return 0; 
+            return 2; 
         }
         if (strlen(usuario) == 0) {
             CLEAR;
@@ -379,7 +396,8 @@ int main() {
                       
             if(respuesta == '1') {
                 CLEAR;
-                if(login()) CLEAR; admin();
+                if(login()==2) continue;
+                else CLEAR; admin();
             } else if(respuesta == '2') {
                 CLEAR;
                 general();
