@@ -13,8 +13,6 @@ Libro* libros = NULL;
 int stockLibros = 0;
 
 
-
-
 void liberarLibro(Libro *libro) {
     if (libro != NULL) {
         if (libro->titulo != NULL) {
@@ -56,11 +54,11 @@ void mostrarLibrosPorAutor(char* autor) {
     printf("=== LIBROS FILTRADOS POR AUTOR: '%s' ===\n", autor);
     int encontrados = 0;
     for (int i = 0; i < stockLibros; i++) {
-        // strstr busca si el nombre del autor del libro contiene el texto buscado
+        //strstr busca si el nombre del autor del libro contiene el texto buscado
         if (strstr(libros[i].autor, autor) != NULL) {
             char* mostrarLibros = libroToString(&libros[i]);
             if (mostrarLibros != NULL) {
-                // Imprimimos la línea completa del libro
+                //imprimimos la línea completa del libro
                 printf("%s\n", mostrarLibros);
                 free(mostrarLibros);
                 encontrados++;
@@ -89,6 +87,7 @@ void mostrarTodosLosLibros() {
     printf("Total de titulos: %d\n", stockLibros);
     printf("==================================\n");
 }
+
 void cargarLibros() {
     FILE* archivo = fopen("store/libros.json", "r");
     char buffer[256];
@@ -161,6 +160,76 @@ void cargarLibros() {
         }
     }
     fclose(archivo);
+}
+
+void cargaInventario(const char* archivoCarga) {
+    FILE* archivo = fopen(archivoCarga, "r");
+    if(archivo == NULL) {
+        printf("\033[0;31mError: No se pudo abrir el archivo de carga %s\033[0m\n", archivoCarga);
+        return;
+    }
+
+    char linea[128];
+    int lineaNum = 0;
+    int procesadas = 0, noProcesadas = 0;
+
+    printf("=== CARGA DE INVENTARIO ===\n");
+
+    while(fgets(linea, sizeof(linea), archivo)) {
+        lineaNum++;
+
+        linea[strcspn(linea, "\n")] = 0;
+
+        if(strlen(linea) == 0) continue;
+
+        char* codigo = strtok(linea, ",");
+        char* cantidadStr = strtok(NULL, ",");
+
+        if(codigo == NULL || cantidadStr == NULL) {
+            printf("\033[0;33m[Linea %d] Formato invalido.\033[0m\n", lineaNum);
+            noProcesadas++;
+            continue;
+        }
+
+        int cantidad = atoi(cantidadStr);
+        bool libroExiste = false;
+
+        for (int i = 0; i < stockLibros; i++) {
+            if (strcmp(libros[i].codigo, codigo) == 0) {
+                libroExiste = true;
+
+                if (cantidad >= 0) {
+                    agregarStockLibro(codigo, cantidad);
+                    printf("[Linea %d] Se agrego %d unidades al libro %s\n", lineaNum, cantidad, codigo);
+                    procesadas++;
+                } else {
+                    int cantidadAbs = abs(cantidad);
+                    if (libros[i].stock - cantidadAbs < 0) {
+                        printf("\033[0;31m[Linea %d] No se puede eliminar %d unidades, stock insuficiente en %s.\033[0m\n", lineaNum, cantidadAbs, codigo);
+                        noProcesadas++;
+                    } else {
+                        eliminarStockLibro(codigo, cantidadAbs);
+                        guardarLibros();
+                        printf("[Linea %d] Se eliminaron %d unidades del libro %s\n", lineaNum, cantidadAbs, codigo);
+                        procesadas++;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (!libroExiste) {
+            printf("\033[0;33m[Linea %d] No existe un libro con codigo %s.\033[0m\n", lineaNum, codigo);
+            noProcesadas++;
+        }
+    }
+
+    fclose(archivo);
+
+    printf("\n=== RESUMEN DE CARGA ===\n");
+    printf("Lineas procesadas: %d\n", procesadas);
+    printf("Lineas no procesadas: %d\n", noProcesadas);
+    printf("===========================\n");
 }
 
 void guardarLibros() {

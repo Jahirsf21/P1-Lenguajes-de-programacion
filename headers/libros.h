@@ -30,6 +30,7 @@ void guardarLibros();
 void eliminarStockLibro(char *codigo, int cantidad);
 void eliminarLibro(char *codigo);
 void agregarStockLibro(char* codigo, int cantidad);
+void cargaInventario(const char* archivoCarga);
 
 
 
