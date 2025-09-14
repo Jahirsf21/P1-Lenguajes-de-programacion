@@ -200,6 +200,9 @@ int ClientesConMasPedidos(){
     if(cantidadClientes==0){
         printf("No hay clientes registrados en el sistema.");
     }
+    else if(cantidadPedidos==0){
+        printf("No hay pedidos efectuados.");
+    }
     else {
         printf("Clientes con mas pedidos:\n");
         Cliente* clientestemp= ordenarClientesCantPedidos();
@@ -323,7 +326,10 @@ int LibrosMasVendidosAnio(int anio){
 int LibrosMasVendidosMenu() {
     if (stockLibros == 0) {
         printf("No hay libros registrados\n");
-    } else {
+    } 
+    else if(cantidadPedidos==0){
+        printf("No hay pedidos efectuados.");
+    }else {
         printf("Filtro por año (En blanco si no quieres filtrar): ");
         char input[10];
         if (fgets(input, sizeof(input), stdin)) {
@@ -352,6 +358,8 @@ int LibrosMasVendidosMenu() {
 int autorConMasVentasAnio() {
     if (cantidadPedidos == 0) {
         printf("No hay pedidos registrados en el sistema.\n");
+    }else if(cantidadPedidos==0){
+        printf("No hay pedidos efectuados.");
     } else {
         int primer = obtenerPrimerAnio();
         int ultimo = obtenerUltimoAnio();
