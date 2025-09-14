@@ -536,3 +536,54 @@ void menuEliminarLibro() {
         break; 
     }
 }
+
+void menuCargarInventario() {
+    char archivo[100];
+    printf("=== CARGA DE INVENTARIO ===\n");
+
+    while (true) {
+        printf("Ingrese el nombre del archivo de carga (ej: carga.txt) o ( r ) para regresar: ");
+        fgets(archivo, sizeof(archivo), stdin);
+
+        if ((strlen(archivo) > 0) && (archivo[strlen(archivo)-1] == '\n')) {
+            archivo[strlen(archivo)-1] = '\0';
+        }
+
+        if (strlen(archivo) == 1 && tolower(archivo[0]) == 'r') {
+            CLEAR;
+            printf("Regresando al menú anterior...\n");
+            return;
+        }
+
+        if (strlen(archivo) == 0) {
+            printf("\033[0;31mDebes ingresar un nombre de archivo válido.\033[0m\n");
+            continue;
+        }
+
+        char confirmacion[10];
+        while (true) {
+            printf("¿Deseas procesar el archivo '%s'? (s/n): ", archivo);
+            fgets(confirmacion, sizeof(confirmacion), stdin);
+
+            if (strlen(confirmacion) > 0 && confirmacion[strlen(confirmacion)-1] == '\n') {
+                confirmacion[strlen(confirmacion)-1] = '\0';
+            }
+
+            if (strlen(confirmacion) != 1 || 
+                (tolower(confirmacion[0]) != 's' && tolower(confirmacion[0]) != 'n')) {
+                printf("\033[0;31mEntrada inválida. Por favor ingresa 's' o 'n'.\033[0m\n");
+                continue;
+            }
+
+            if (tolower(confirmacion[0]) == 'n') {
+                printf("Carga cancelada.\n");
+                return;
+            }
+            break;
+        }
+
+        CLEAR;
+        cargaInventario(archivo);
+        break; 
+    }
+}

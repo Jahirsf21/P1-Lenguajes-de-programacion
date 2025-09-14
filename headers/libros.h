@@ -23,6 +23,7 @@ void menuAgregarStockLibro();
 
 
 void menuEliminarLibro();
+void menuCargaInventario();
 
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock);
 void cargarLibros();

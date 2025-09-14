@@ -38,5 +38,4 @@ void eliminarCliente(int indice);
 
 void eliminarClientePorCedula(char* cedula);
 
-
 #endif
