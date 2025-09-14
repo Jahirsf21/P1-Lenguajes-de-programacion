@@ -256,6 +256,7 @@ int admin(){
             break;
         case '2': 
             CLEAR;
+            menuCargarInventario();
             break;
         case '3':
             CLEAR;
