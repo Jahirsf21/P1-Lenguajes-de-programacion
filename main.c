@@ -34,6 +34,7 @@ void menuLibros() {
                 break;
             case '2':
                 if (stockLibros > 0) {
+                    CLEAR;
                     menuEliminarLibro();
                 } else {
                     printf("\033[0;31mNo hay libros registrados para eliminar.\033[0m\n");
@@ -106,32 +107,42 @@ void menuPedidos() {
 
         switch (input[0]) {
             case '1':
+                CLEAR;
                 menuCrearPedido(); 
                 break;
             case '2':
+                CLEAR;
                 menuEliminarPedido(); 
                 break;
             case '3':
+                CLEAR;
                 menuModificarPedido();
                 break;
             case '4':
+                CLEAR;
                 mostrarTodosLosPedidos();
                 printf("\nPresione Enter para continuar...");
                 getchar();
                 break;
             case '5': {
+                CLEAR;
+                mostrarTodosLosPedidos();
                 char fecha[20];
-                printf("Ingrese la fecha a buscar (dd/mm/aaaa): ");
+                printf("Ingrese la fecha a buscar (dd/mm/aaaa) (o r para regresar): ");
                 fgets(fecha, sizeof(fecha), stdin);
                 fecha[strcspn(fecha, "\n")] = 0;
-                if (validarFecha(fecha)) {
-                    mostrarPedidoPorFecha(fecha);
+                if (strcmp(fecha, "r") == 0 || strcmp(fecha, "R") == 0 ){
+                    menuPedidos();
                 } else {
-                    printf("\033[0;31mFormato de fecha no válido.\033[0m\n");
+                    if (validarFecha(fecha)) {
+                        mostrarPedidoPorFecha(fecha);
+                    } else {
+                        printf("\033[0;31mFormato de fecha no válido.\033[0m\n");
+                    }
+                    printf("\nPresione Enter para continuar...");
+                    getchar();
+                    break;
                 }
-                printf("\nPresione Enter para continuar...");
-                getchar();
-                break;
             }
             case '6':
                 return; 
@@ -173,11 +184,11 @@ int menuEstadisticas(){
             break;
         case '3':
             CLEAR;
-            printf("libros mas vendidos");
+            LibrosMasVendidosMenu();
             break;
         case '4':
             CLEAR;
-            printf("autores mas ventas");
+            autorConMasVentasAnio();
             break;
         case '5':
             CLEAR;
@@ -225,7 +236,7 @@ int admin(){
             break;
         case '2': 
             CLEAR;
-            menuCargaInventario();
+            printf("carga de inventario\n");
             break;
         case '3':
             CLEAR;
@@ -311,7 +322,7 @@ int login() {
         if (!fgets(usuario, sizeof(usuario), stdin)) continue;
         usuario[strcspn(usuario, "\n")] = 0;
 
-        if (strcmp(usuario, "r") == 0) {
+        if (strcmp(usuario, "r") == 0 || strcmp(usuario, "R") == 0) {
             CLEAR;
             return 0; 
         }
@@ -342,12 +353,12 @@ int login() {
 
 
 int main() {
-    CLEAR;
     cargarClientes();
     cargarLibros();
     cargarPedidos();
     cargarLocal();
     while(true){
+        CLEAR;
         printf("Bienvenido al sistema de Librería\n");
         printf("Menu principal:\n");
         printf("1- Opciones Administrativas\n");
@@ -390,6 +401,6 @@ int main() {
             printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
         }
     }
-
     return 0;
+
 }

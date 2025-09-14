@@ -1,0 +1,19 @@
+[
+    {
+        "codigo": "PED-002",
+        "fecha": "14/09/2025",
+        "nombre del cliente": "Natalia",
+        "telefono del cliente": "90009993",
+        "cedula del cliente": "000000001",
+        "subtotal": 60000.00,
+        "impuesto": 7800.00,
+        "total": 67800.00,
+        "detalles": [
+            {
+                "titulo del libro": "Lupin",
+                "codigo del libro": "003",
+                "cantidad": 10
+            }
+        ]
+    }
+]

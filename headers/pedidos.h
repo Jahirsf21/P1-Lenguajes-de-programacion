@@ -53,10 +53,10 @@ int obtenerUltimoAnio();
 int obtenerPrimerAnio();
 float obtenerTotalMesAnio(int mes, int anio);
 float obtenerTotalAnio(int anio);
-float obtenerTotal();
+float obtenerTotalGeneral();
 int obtenerCantPedidosCliente(Cliente *cliente);
 int cantVentasLibro(Libro* libro);
 int cantVentasLibroAnio(Libro* libro, int anio);
-char** todosLosAutores(int anio, int cantidadAutores);
+char** todosLosAutores(int anio, int * cantidadAutores);
 int ventasAutorAnio(char* autor, int anio);
 #endif

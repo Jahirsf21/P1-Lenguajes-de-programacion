@@ -157,7 +157,7 @@ int totalPedidos(){
             }
             printf("Total Año: %f", obtenerTotalAnio(i));
         }
-        prinf("Total General: %f", obtenerTotal()); 
+        printf("Total General: %f", obtenerTotalGeneral()); 
         
     }
 }
@@ -223,7 +223,7 @@ Libro* ordenarLibrosCantVentas(){
         while(cambio){
             cambio=false;
             for(int i=0;i<stockLibros-1;i++){
-                if(ocantVentasLibro(librosTemp+i)<cantVentasLibro(librosTemp+i+1)){
+                if(cantVentasLibro(librosTemp+i)<cantVentasLibro(librosTemp+i+1)){
                     temp = *(librosTemp+i);
                     *(librosTemp+i)= *(librosTemp+i+1);
                     *(librosTemp+i+1)=temp;
@@ -246,7 +246,7 @@ int LibrosMasVendidos(){
     }
 }
 
-Cliente* ordenarLibrosCantVentasAnio(int anio){
+Libro* ordenarLibrosCantVentasAnio(int anio){
     Libro* librosTemp= malloc(stockLibros*sizeof(Libro));
     memcpy(librosTemp, libros, stockLibros*sizeof(Libro));
     Libro temp;
@@ -262,7 +262,7 @@ Cliente* ordenarLibrosCantVentasAnio(int anio){
         while(cambio){
             cambio=false;
             for(int i=0;i<stockLibros-1;i++){
-                if(ocantVentasLibroAnio(librosTemp+i, anio)<cantVentasLibroAnio(librosTemp+i+1, anio)){
+                if(cantVentasLibroAnio(librosTemp+i, anio)<cantVentasLibroAnio(librosTemp+i+1, anio)){
                     temp = *(librosTemp+i);
                     *(librosTemp+i)= *(librosTemp+i+1);
                     *(librosTemp+i+1)=temp;
@@ -285,8 +285,8 @@ char** ordenarAutoresCantVentasAnio(int anio, int* cantidadAutores) {
     while (cambio) {
         cambio = false;
         for (int i = 0; i < cantidad - 1; i++) {
-            int ventas1 = cantVentasAutorAnio(*(autores + i), anio);
-            int ventas2 = cantVentasAutorAnio(*(autores + i + 1), anio);
+            int ventas1 = ventasAutorAnio(*(autores + i), anio);
+            int ventas2 = ventasAutorAnio(*(autores + i + 1), anio);
             if (ventas1 < ventas2) {
                 char* temp = *(autores + i);
                 *(autores + i) = *(autores + i + 1);
@@ -329,7 +329,7 @@ int LibrosMasVendidosMenu() {
                     printf("Entrada inválida. Por favor, ingresa un año.\n");
                     return 0;
                 }
-                int anio = atoi(input);
+                anio = atoi(input);
                 LibrosMasVendidosAnio(anio);
                 
             }
@@ -365,9 +365,9 @@ int autorConMasVentasAnio() {
 
             printf("Autores con más ventas en %d:\n", anio);
             int cantAutores;
-            char **autores = ordenarAutoresCantVentasAnio(anio,cantAutores);
+            char **autores = ordenarAutoresCantVentasAnio(anio, &cantAutores);
             for (int i = 0; i < cantidadClientes; i++) {
-                printf("%i- %s: %i ventas\n", i + 1, *(autores + i), ventasAutorAnio(autores + i, anio));
+                printf("%i- %s: %i ventas\n", i + 1, *(autores + i), ventasAutorAnio(*(autores + i), anio));
             } 
         }
     }

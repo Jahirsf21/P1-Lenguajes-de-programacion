@@ -402,6 +402,7 @@ void menuCrearPedido() {
 
         switch (opcion[0]) {
             case '1': {
+                CLEAR;
                 mostrarTodosLosLibros();
                 printf("¿Desea filtrar el catálogo por autor? (s/n): ");
                 char filtroOpcion[10];
@@ -414,6 +415,7 @@ void menuCrearPedido() {
                     nombreAutor[strcspn(nombreAutor, "\n")] = 0;
                     mostrarLibrosPorAutor(nombreAutor);
                 } else {
+                    CLEAR;
                     mostrarTodosLosLibros();
                 }
 
@@ -475,6 +477,7 @@ void menuCrearPedido() {
                 break;
             }
             case '2': {
+                CLEAR;
                 if (cantidadEnCarrito == 0) {
                     printf("\033[0;31mEl carrito está vacío, no hay nada que eliminar.\033[0m\n");
                     break;
@@ -505,6 +508,7 @@ void menuCrearPedido() {
                 break;
             }
             case '3': {
+                CLEAR;
                 if (cantidadEnCarrito == 0) {
                     printf("\033[0;31mNo puede generar un pedido con el carrito vacío.\033[0m\n");
                     break;
@@ -513,6 +517,7 @@ void menuCrearPedido() {
                 Cliente* clienteEncontrado = NULL;
                 char cedulaCliente[100];
                 do {
+                    mostrarTodosLosClientes();
                     printf("Ingrese la cédula del cliente (o 'c' para cancelar): ");
                     fgets(cedulaCliente, sizeof(cedulaCliente), stdin);
                     cedulaCliente[strcspn(cedulaCliente, "\n")] = 0;
@@ -541,6 +546,7 @@ void menuCrearPedido() {
                 return;
             }
             case '4': {
+                CLEAR;
                 if (carrito != NULL) {
                     free(carrito);
                 }
@@ -780,7 +786,7 @@ float obtenerTotalGeneral(){
 }
 
 
-int cantPedidosCliente(Cliente* cliente){
+int obtenerCantPedidosCliente(Cliente* cliente){
     int res;
     for(int i=0; i<cantidadPedidos; i++){
         if ((pedidos+i)->cliente == cliente){
@@ -821,22 +827,21 @@ bool yaEsta(char** arr, char* autor, int len){
 }
 
 char** todosLosAutores(int anio, int* cantidadAutores) {
-    char** autores = NULL;  
+
+    char** autores = NULL;
     int count = 0;
 
     for (int i = 0; i < cantidadPedidos; i++) {
-        for (int j = 0; j < ((pedidos + i)->cantidadDetalles); j++) {
-            char* actual = *(((pedidos + i)->detalles) + j)->libro->autor;
+        for (int j = 0; j < pedidos[i].cantidadDetalles; j++) {
+            char* actual = pedidos[i].detalles[j].libro->autor;
 
-            
             if (!yaEsta(autores, actual, count)) {
                 autores = realloc(autores, (count + 1) * sizeof(char*));
-                *(autores + count) = actual;
+                autores[count] = actual;
                 count++;
             }
         }
     }
-
     *cantidadAutores = count;
     return autores;
 }
