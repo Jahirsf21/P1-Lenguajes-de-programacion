@@ -443,6 +443,7 @@ void menuRegistrarLibro() {
                 titulo[strlen(titulo)-1] = '\0';
             }
             if (strcmp(titulo,"C") == 0 || strcmp(titulo, "c") == 0) {
+                CLEAR;
                 return;
             }
         } while(!validarTitulo(titulo));
@@ -455,6 +456,7 @@ void menuRegistrarLibro() {
                 autor[strlen(autor)-1] = '\0';
             }
             if (strcmp(autor,"C") == 0 || strcmp(autor, "c") == 0) {
+                CLEAR;
                 return;
             }
         } while(!validarAutor(autor));
@@ -467,6 +469,7 @@ void menuRegistrarLibro() {
                 codigo[strlen(codigo)-1] = '\0';
             }
             if (strcmp(codigo,"C") == 0 || strcmp(codigo, "c") == 0) {
+                CLEAR;
                 return;
             }
         } while(!validarCodigo(codigo));

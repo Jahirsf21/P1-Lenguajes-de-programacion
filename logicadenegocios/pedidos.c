@@ -268,7 +268,7 @@ void liberarTodosLosPedidos() {
         pedidos = NULL; 
     }
     cantidadPedidos = 0; 
-    printf("\033[0;32mTodos los pedidos han sido liberados de la memoria.\033[0m\n");
+    //printf("\033[0;32mTodos los pedidos han sido liberados de la memoria.\033[0m\n");
 }
 
 
@@ -506,6 +506,8 @@ void menuCrearPedido() {
                 CLEAR;
                 if (cantidadEnCarrito == 0) {
                     printf("\033[0;31mEl carrito está vacío, no hay nada que eliminar.\033[0m\n");
+                    printf("\nPresione enter para regresar...");
+                    getchar();
                     break;
                 }
                 int indiceEnCarrito = -1;
@@ -613,6 +615,8 @@ void menuCrearPedido() {
                 CLEAR;
                 if (cantidadEnCarrito == 0) {
                     printf("\033[0;31mNo puede generar un pedido con el carrito vacío.\033[0m\n");
+                    printf("\nPresione enter para regresar...");
+                    getchar();
                     break;
                 }
 
