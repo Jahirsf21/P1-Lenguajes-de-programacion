@@ -394,6 +394,8 @@ void eliminarLibro(char* codigo) {
         }
         guardarLibros();
         printf("Libro eliminado exitosamente.\n");
+        printf("Presiona enter para continuar...");
+        getchar();
     }
 }
 
@@ -414,8 +416,12 @@ void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int s
     
     stockLibros++;
     CLEAR;
+    char* libro = libroToString(&libros[stockLibros-1]);
     printf("El libro ha sido registrado!\n");
+    printf("%s\n", libro);
     guardarLibros();
+    printf("Presiona enter para continuar...");
+    getchar();
 }
 
 void menuRegistrarLibro() {
@@ -425,34 +431,43 @@ void menuRegistrarLibro() {
     float precio;
     int stock;
     bool datosValidos = false;
-    
+    mostrarTodosLosLibros();
     printf("=== REGISTRAR NUEVO LIBRO ===\n");  
     
     while (!datosValidos) {
         // Solicitar título
         do {
-            printf("Ingrese el titulo del libro: ");
+            printf("Ingrese el titulo del libro (c para cancelar): ");
             fgets(titulo, sizeof(titulo), stdin);
             if ((strlen(titulo) > 0) && (titulo[strlen(titulo)-1] == '\n')) {
                 titulo[strlen(titulo)-1] = '\0';
+            }
+            if (strcmp(titulo,"C") == 0 || strcmp(titulo, "c") == 0) {
+                return;
             }
         } while(!validarTitulo(titulo));
         
         // Solicitar autor
         do {
-            printf("Ingrese el autor del libro: "); 
+            printf("Ingrese el autor del libro (c para cancelar): "); 
             fgets(autor, sizeof(autor), stdin);
             if ((strlen(autor) > 0) && (autor[strlen(autor)-1] == '\n')) {
                 autor[strlen(autor)-1] = '\0';
+            }
+            if (strcmp(autor,"C") == 0 || strcmp(autor, "c") == 0) {
+                return;
             }
         } while(!validarAutor(autor));
         
         // Solicitar código
         do {
-            printf("Ingrese el codigo del libro: ");  
+            printf("Ingrese el codigo del libro (c para cancelar): ");  
             fgets(codigo, sizeof(codigo), stdin);
             if ((strlen(codigo) > 0) && (codigo[strlen(codigo)-1] == '\n')) {
                 codigo[strlen(codigo)-1] = '\0';
+            }
+            if (strcmp(codigo,"C") == 0 || strcmp(codigo, "c") == 0) {
+                return;
             }
         } while(!validarCodigo(codigo));
 
@@ -532,7 +547,59 @@ void menuEliminarLibro() {
             }
             break;
         }
+        CLEAR;
         eliminarLibro(codigo);
+        break; 
+    }
+}
+
+void menuCargarInventario() {
+    char archivo[100];
+    printf("=== CARGA DE INVENTARIO ===\n");
+
+    while (true) {
+        printf("Ingrese el nombre del archivo de carga (ej: carga.txt) o ( r ) para regresar: ");
+        fgets(archivo, sizeof(archivo), stdin);
+
+        if ((strlen(archivo) > 0) && (archivo[strlen(archivo)-1] == '\n')) {
+            archivo[strlen(archivo)-1] = '\0';
+        }
+
+        if (strlen(archivo) == 1 && tolower(archivo[0]) == 'r') {
+            CLEAR;
+            printf("Regresando al menú anterior...\n");
+            return;
+        }
+
+        if (strlen(archivo) == 0) {
+            printf("\033[0;31mDebes ingresar un nombre de archivo válido.\033[0m\n");
+            continue;
+        }
+
+        char confirmacion[10];
+        while (true) {
+            printf("¿Deseas procesar el archivo '%s'? (s/n): ", archivo);
+            fgets(confirmacion, sizeof(confirmacion), stdin);
+
+            if (strlen(confirmacion) > 0 && confirmacion[strlen(confirmacion)-1] == '\n') {
+                confirmacion[strlen(confirmacion)-1] = '\0';
+            }
+
+            if (strlen(confirmacion) != 1 || 
+                (tolower(confirmacion[0]) != 's' && tolower(confirmacion[0]) != 'n')) {
+                printf("\033[0;31mEntrada inválida. Por favor ingresa 's' o 'n'.\033[0m\n");
+                continue;
+            }
+
+            if (tolower(confirmacion[0]) == 'n') {
+                printf("Carga cancelada.\n");
+                return;
+            }
+            break;
+        }
+
+        CLEAR;
+        cargaInventario(archivo);
         break; 
     }
 }

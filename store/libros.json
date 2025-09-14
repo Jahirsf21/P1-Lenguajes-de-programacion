@@ -1,16 +1,2 @@
 [
-    {
-        "titulo": "Nunca nunca",
-        "autor": "Sergio",
-        "codigo": "001",
-        "precio": 5000.00,
-        "stock": 29
-    },
-    {
-        "titulo": "Lupin",
-        "autor": "Arsene Lupin",
-        "codigo": "003",
-        "precio": 6000.00,
-        "stock": 0
-    }
 ]

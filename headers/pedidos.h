@@ -33,6 +33,7 @@ void menuEliminarPedido();
 // Funciones para la creacion, modificacion, eliminacion y actualizacion de datos;
 void generarPedido(DetallePedido* carrito, int cantidadEnCarrito, float subtotal, Cliente* cliente, char* fecha);
 void modificarPedido(Pedido* pedidoAModificar);
+void liberarTodosLosPedidos();
 void eliminarPedido(char* codigo);
 void actualizarMontoPedido(Pedido* pedido);
 

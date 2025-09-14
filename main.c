@@ -30,6 +30,7 @@ void menuLibros() {
 
         switch (input[0]) {
             case '1':
+                CLEAR;
                 menuRegistrarLibro();
                 break;
             case '2':
@@ -38,6 +39,7 @@ void menuLibros() {
                     menuEliminarLibro();
                 } else {
                     printf("\033[0;31mNo hay libros registrados para eliminar.\033[0m\n");
+                    printf("Presionar enter para continuar...");
                     getchar();
                 }
                 break;
@@ -79,6 +81,7 @@ void menuClientes() {
                 }
                 break;
             case '3':
+                CLEAR;
                 return;
             default:
                 printf("\033[0;31mOpción no válida.\033[0m\n");
@@ -251,9 +254,8 @@ int admin(){
             CLEAR;
             menuLibros();
             break;
-        case '2':
+        case '2': 
             CLEAR;
-            //cargaInventario();
             break;
         case '3':
             CLEAR;
@@ -408,6 +410,9 @@ int main() {
                     char res = confirm[0];
                     if(res=='n' || res=='N') continue;
                     else exit(0);
+                    liberarTodosLosLibros();
+                    liberarTodosLosClientes();
+                    liberarTodosLosPedidos();
                 }
             } else {
                 CLEAR;

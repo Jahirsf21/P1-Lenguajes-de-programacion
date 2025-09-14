@@ -13,17 +13,16 @@ typedef struct libro {
 extern Libro* libros;
 extern int stockLibros;
 
+// métodos to String.
 char* libroToString(Libro *libro);
 void mostrarTodosLosLibros();
 void mostrarLibrosPorAutor(char* autor);
 
-//Funciones para el registro, cargado y guardado de los libros
+//Funciones para el registro, eliminación, cargado y guardado de los libros
 void menuRegistrarLibro();
 void menuAgregarStockLibro();
-
-
+void menuCargarInventario();
 void menuEliminarLibro();
-
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock);
 void cargarLibros();
 void guardarLibros();
@@ -31,8 +30,6 @@ void eliminarStockLibro(char *codigo, int cantidad);
 void eliminarLibro(char *codigo);
 void agregarStockLibro(char* codigo, int cantidad);
 void cargaInventario(const char* archivoCarga);
-
-
 
 //Funciones de busqueda
 bool existeLibro(char* codigo);
