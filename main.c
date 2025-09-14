@@ -390,6 +390,9 @@ int main() {
                     char res = confirm[0];
                     if(res=='n' || res=='N') continue;
                     else exit(0);
+                    liberarTodosLosLibros();
+                    liberarTodosLosClientes();
+                    liberarTodosLosPedidos();
                 }
             } else {
                 CLEAR;

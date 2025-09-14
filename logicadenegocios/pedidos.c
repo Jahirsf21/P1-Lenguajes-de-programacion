@@ -257,6 +257,21 @@ void cargarPedidos() {
 }
 
 
+void liberarTodosLosPedidos() {
+    for (int i = 0; i < cantidadPedidos; i++) {
+        free(pedidos[i].codigo);
+        free(pedidos[i].fecha);
+        free(pedidos[i].detalles); 
+    }
+    if (pedidos != NULL) {
+        free(pedidos);
+        pedidos = NULL; 
+    }
+    cantidadPedidos = 0; 
+    printf("\033[0;32mTodos los pedidos han sido liberados de la memoria.\033[0m\n");
+}
+
+
 void eliminarPedido(char* codigo) {
     int indice = -1;
     for (int i = 0; i < cantidadPedidos; i++) {
