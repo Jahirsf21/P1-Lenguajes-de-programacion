@@ -54,7 +54,7 @@ void eliminarCliente(int indice) {
         clientes = NULL;
     }
     
-    printf("\033[0;32mCliente eliminado exitosamente\033[0m\n");
+    printf("Cliente eliminado\n");
     guardarClientes();
     printf("Presiona enter para continuar...");
     getchar();

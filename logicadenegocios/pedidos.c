@@ -476,6 +476,8 @@ void menuCrearPedido() {
                     if (cantidadDeseada <= 0 || cantidadDeseada > libroEncontrado->stock) {
                         printf("\033[0;31mError: Cantidad inválida o no hay suficiente stock. Intente de nuevo.\033[0m\n");
                     }
+                    printf("Presione enter para continuar...");
+                    getchar();
                 } while (cantidadDeseada <= 0 || cantidadDeseada > libroEncontrado->stock);
                 
                 int indiceExistente = -1;
