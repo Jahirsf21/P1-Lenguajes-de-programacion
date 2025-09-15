@@ -569,12 +569,14 @@ void menuCrearPedido() {
                     }
                 }
                 if (indiceExistente != -1) {
-                    if (carrito[indiceExistente].cantidad + cantidadDeseada > libroEncontrado->stock) {
-                         printf("\033[0;31mError: La cantidad total excedería el stock disponible.\033[0m\n");
+                    if (cantidadDeseada > libroEncontrado->stock) {
+                        printf("\033[0;31mError: La cantidad solicitada (%d) excede el stock disponible (%d).\033[0m\n", 
+                            cantidadDeseada, libroEncontrado->stock);
                     } else {
                         carrito[indiceExistente].cantidad += cantidadDeseada;
                         actualizarStockTemporal(codigoLibro, -cantidadDeseada);
-                        printf("\033[0;32mCantidad actualizada en el carrito.\033[0m\n");
+                        printf("\033[0;32mCantidad actualizada en el carrito. Nueva cantidad: %d\033[0m\n", 
+                            carrito[indiceExistente].cantidad);
                     }
                 } else {
                     cantidadEnCarrito++;
@@ -884,7 +886,7 @@ void menuModificarPedido() {
         printf("\nIngrese el código del pedido que desea modificar (o c para cancelar): ");
         fgets(codigoPedido, sizeof(codigoPedido), stdin);
         codigoPedido[strcspn(codigoPedido, "\n")] = 0;
-        if (strcmp(codigoPedido, "c") == 0) {
+        if (strcmp(codigoPedido, "c") == 0 || strcmp(codigoPedido, "C") == 0) {
             printf("Modificación cancelada.\n");
             return;
         }
