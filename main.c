@@ -15,8 +15,9 @@ void limpiarBuffer() {
 }
 
 void menuLibros() {
+    CLEAR;
     while (true) {
-        CLEAR;
+        
         printf("Menú de Gestión de Libros:\n");
         printf("1- Registrar Libro\n");
         printf("2- Eliminar Libro\n");
@@ -26,7 +27,11 @@ void menuLibros() {
         char input[10];
         fgets(input, sizeof(input), stdin);
         input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 0) continue;
+        if (strlen(input) == 0){
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            continue;
+        } 
 
         switch (input[0]) {
             case '1':
@@ -47,8 +52,8 @@ void menuLibros() {
                 CLEAR;
                 return;
             default:
+                CLEAR;
                 printf("\033[0;31mOpción no válida.\033[0m\n");
-                getchar();
                 break;
         }
     }
@@ -420,10 +425,16 @@ int main() {
                 if(fgets(confirm, sizeof(confirm), stdin)) {
                     char res = confirm[0];
                     if(res=='n' || res=='N') continue;
-                    else exit(0);
-                    liberarTodosLosLibros();
-                    liberarTodosLosClientes();
-                    liberarTodosLosPedidos();
+                    else 
+                    {
+                        liberarTodosLosLibros();
+                        liberarTodosLosClientes();
+                        liberarTodosLosPedidos();
+                        CLEAR;
+                        printf("\033[0;32mSaliendo del sistema de Librerías\033[0m\n");
+                        exit(0);
+                        
+                    }
                 }
             } else {
                 CLEAR;
