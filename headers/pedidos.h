@@ -24,6 +24,9 @@ typedef struct pedido {
 extern Pedido* pedidos;
 extern int cantidadPedidos;
 
+extern Libro* librosTemporales;
+extern bool stockTemporal;
+
 
 // Menus
 void menuCrearPedido();
@@ -48,6 +51,14 @@ void cargarPedidos();
 
 //Validaciones
 bool validarFecha(char* fecha);
+
+//Auxiliares para el pedido
+// Agregar estas declaraciones
+
+void crearCopiaTemporalLibros();
+void liberarCopiaTemporalLibros();
+Libro* buscarLibroPorCodigoTemporal(char* codigo);
+void actualizarStockTemporal(char* codigo, int cambio);
 
 //Funciones para obtener información para las estadisticas 
 int obtenerUltimoAnio();

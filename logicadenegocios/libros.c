@@ -50,12 +50,13 @@ char* libroToString(Libro *libro) {
 
 
 void mostrarLibrosPorAutor(char* autor) {
-    CLEAR;
     printf("=== LIBROS FILTRADOS POR AUTOR: '%s' ===\n", autor);
     int encontrados = 0;
+    Libro* arrayAUsar = stockTemporal ? librosTemporales : libros;
+    
     for (int i = 0; i < stockLibros; i++) {
-        if (strstr(libros[i].autor, autor) != NULL) {
-            char* mostrarLibros = libroToString(&libros[i]);
+        if (strstr(arrayAUsar[i].autor, autor) != NULL) {
+            char* mostrarLibros = libroToString(&arrayAUsar[i]);
             if (mostrarLibros != NULL) {
                 printf("%s\n", mostrarLibros);
                 free(mostrarLibros);

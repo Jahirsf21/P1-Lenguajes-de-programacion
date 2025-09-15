@@ -13,6 +13,62 @@
 Pedido* pedidos = NULL;
 int cantidadPedidos = 0;
 
+Libro* librosTemporales = NULL;
+bool stockTemporal = false;
+
+void liberarCopiaTemporalLibros() {
+    if (librosTemporales != NULL) {
+        for (int i = 0; i < stockLibros; i++) {
+            free(librosTemporales[i].codigo);
+            free(librosTemporales[i].titulo);
+            free(librosTemporales[i].autor);
+        }
+        free(librosTemporales);
+        librosTemporales = NULL;
+    }
+    stockTemporal = false;
+}
+
+void crearCopiaTemporalLibros() {
+    if (librosTemporales != NULL) {
+        free(librosTemporales);
+    }
+    librosTemporales = malloc(stockLibros * sizeof(Libro));
+    for (int i = 0; i < stockLibros; i++) {
+        librosTemporales[i] = libros[i];
+        librosTemporales[i].codigo = malloc(strlen(libros[i].codigo) + 1);
+        strcpy(librosTemporales[i].codigo, libros[i].codigo);
+        librosTemporales[i].titulo = malloc(strlen(libros[i].titulo) + 1);
+        strcpy(librosTemporales[i].titulo, libros[i].titulo);
+        librosTemporales[i].autor = malloc(strlen(libros[i].autor) + 1);
+        strcpy(librosTemporales[i].autor, libros[i].autor);
+    }
+    stockTemporal = true;
+}
+
+
+Libro* buscarLibroPorCodigoTemporal(char* codigo) {
+    Libro* arrayAUsar = stockTemporal ? librosTemporales : libros;
+    for (int i = 0; i < stockLibros; i++) {
+        if (strcmp(arrayAUsar[i].codigo, codigo) == 0) {
+            return &arrayAUsar[i];
+        }
+    }
+    return NULL;
+}
+
+
+void actualizarStockTemporal(char* codigo, int cambio) {
+    if (!stockTemporal) return;
+    for (int i = 0; i < stockLibros; i++) {
+        if (strcmp(librosTemporales[i].codigo, codigo) == 0) {
+            librosTemporales[i].stock += cambio;
+            break;
+        }
+    }
+}
+
+
 char* pedidoToString(Pedido* pedido) {
     char buffer[2048];
     char* cursor = buffer;
@@ -381,6 +437,7 @@ void menuCrearPedido() {
         getchar();
         return; 
     }
+    crearCopiaTemporalLibros();
 
     DetallePedido* carrito = NULL;
     int cantidadEnCarrito = 0;
@@ -422,27 +479,50 @@ void menuCrearPedido() {
         printf("Opción: ");
         fgets(opcion, sizeof(opcion), stdin);
         opcion[strcspn(opcion, "\n")] = 0;
-
         if (strlen(opcion) != 1) {
             continue;
         }
         switch (opcion[0]) {
             case '1': {
                 CLEAR;
-                mostrarTodosLosLibros();
-                printf("¿Desea filtrar el catálogo por autor? (s/n): ");
+                printf("=== CATÁLOGO DE LIBROS ===\n");
+                if (stockLibros == 0) {
+                    printf("No hay libros registrados.\n");
+                } else {
+                    for (int i = 0; i < stockLibros; i++) {
+                        Libro* libroMostrar = &librosTemporales[i];
+                        printf("------------------------------------\n");
+                        printf("Código: %s\n", libroMostrar->codigo);
+                        printf("Título: %s\n", libroMostrar->titulo);
+                        printf("Autor: %s\n", libroMostrar->autor);
+                        printf("Precio: %.2f\n", libroMostrar->precio);
+                        printf("Stock: %d\n", libroMostrar->stock);
+                    }
+                    printf("------------------------------------\n");
+                }
+                printf("Total de libros: %d\n", stockLibros);
+                
                 char filtroOpcion[10];
-                fgets(filtroOpcion, sizeof(filtroOpcion), stdin);
-                filtroOpcion[strcspn(filtroOpcion, "\n")] = 0;
+                do {
+                    printf("\n¿Desea filtrar el catálogo por autor? (s/n): ");
+                    fgets(filtroOpcion, sizeof(filtroOpcion), stdin);
+                    filtroOpcion[strcspn(filtroOpcion, "\n")] = 0;
+                    
+                    if (strlen(filtroOpcion) == 1 && (tolower(filtroOpcion[0]) == 's' || tolower(filtroOpcion[0]) == 'n')) {
+                        break;
+                    }
+                    printf("\033[0;31mError: Ingrese 's' para sí o 'n' para no.\033[0m\n");
+                } while (true);
+                
                 if (tolower(filtroOpcion[0]) == 's') {
                     printf("Ingrese el nombre del autor a buscar: ");
                     char nombreAutor[100];
                     fgets(nombreAutor, sizeof(nombreAutor), stdin);
                     nombreAutor[strcspn(nombreAutor, "\n")] = 0;
+                    
                     mostrarLibrosPorAutor(nombreAutor);
                 } else {
-                    CLEAR;
-                    mostrarTodosLosLibros();
+                    
                 }
 
                 Libro* libroEncontrado = NULL;
@@ -452,10 +532,8 @@ void menuCrearPedido() {
                     printf("Ingrese el código del libro a agregar (o 'c' para cancelar): ");
                     fgets(codigoLibro, sizeof(codigoLibro), stdin);
                     codigoLibro[strcspn(codigoLibro, "\n")] = 0;
-
                     if (strcmp(codigoLibro, "c") == 0) break;
-
-                    libroEncontrado = buscarLibroPorCodigo(codigoLibro);
+                    libroEncontrado = buscarLibroPorCodigoTemporal(codigoLibro);
                     if (libroEncontrado == NULL) {
                         printf("\033[0;31mError: Libro con código '%s' no existe. Intente de nuevo.\033[0m\n", codigoLibro);
                     }
@@ -476,8 +554,11 @@ void menuCrearPedido() {
                     if (cantidadDeseada <= 0 || cantidadDeseada > libroEncontrado->stock) {
                         printf("\033[0;31mError: Cantidad inválida o no hay suficiente stock. Intente de nuevo.\033[0m\n");
                     }
-                    printf("Presione enter para continuar...");
-                    getchar();
+                    if (cantidadDeseada > 0 && cantidadDeseada <= libroEncontrado->stock) {
+                        printf("Se agrego el libro al carrito\n");
+                        printf("Presione enter para continuar...");
+                        getchar();
+                    }
                 } while (cantidadDeseada <= 0 || cantidadDeseada > libroEncontrado->stock);
                 
                 int indiceExistente = -1;
@@ -487,19 +568,20 @@ void menuCrearPedido() {
                         break;
                     }
                 }
-
                 if (indiceExistente != -1) {
                     if (carrito[indiceExistente].cantidad + cantidadDeseada > libroEncontrado->stock) {
                          printf("\033[0;31mError: La cantidad total excedería el stock disponible.\033[0m\n");
                     } else {
                         carrito[indiceExistente].cantidad += cantidadDeseada;
+                        actualizarStockTemporal(codigoLibro, -cantidadDeseada);
                         printf("\033[0;32mCantidad actualizada en el carrito.\033[0m\n");
                     }
                 } else {
                     cantidadEnCarrito++;
                     carrito = realloc(carrito, cantidadEnCarrito * sizeof(DetallePedido));
-                    carrito[cantidadEnCarrito - 1].libro = libroEncontrado;
+                    carrito[cantidadEnCarrito - 1].libro = buscarLibroPorCodigo(codigoLibro);
                     carrito[cantidadEnCarrito - 1].cantidad = cantidadDeseada;
+                    actualizarStockTemporal(codigoLibro, -cantidadDeseada);
                     printf("\033[0;32mLibro agregado al carrito.\033[0m\n");
                 }
                 break;
@@ -523,7 +605,6 @@ void menuCrearPedido() {
                     printf("Ingrese el código del libro a eliminar/modificar (o 'c' para cancelar): ");
                     fgets(codigoLibro, sizeof(codigoLibro), stdin);
                     codigoLibro[strcspn(codigoLibro, "\n")] = 0;
-
                     if (strcmp(codigoLibro, "c") == 0 || strcmp(codigoLibro, "C") == 0) break;
 
                     for (int i = 0; i < cantidadEnCarrito; i++) {
@@ -532,27 +613,23 @@ void menuCrearPedido() {
                             break;
                         }
                     }
-
                     if (indiceEnCarrito == -1) {
                         printf("\033[0;31mError: El libro con código '%s' no está en el carrito. Intente de nuevo.\033[0m\n", codigoLibro);
                     }
                 } while (indiceEnCarrito == -1);
-
                 if (indiceEnCarrito == -1) break;
-
                 printf("Libro seleccionado: %s (Cantidad actual: %d)\n", carrito[indiceEnCarrito].libro->titulo, carrito[indiceEnCarrito].cantidad);
                 printf("1. Eliminar todas las unidades del libro\n");
                 printf("2. Reducir la cantidad\n");
                 printf("Opción (o 'c' para cancelar): ");
                 fgets(inputBuffer, sizeof(inputBuffer), stdin);
                 inputBuffer[strcspn(inputBuffer, "\n")] = 0;
-
                 if (strcmp(inputBuffer, "c") == 0 || strcmp(inputBuffer, "C") == 0) {
                      printf("Operación cancelada.\n");
                      break;
                 }
-
                 if (strcmp(inputBuffer, "1") == 0) {
+                    actualizarStockTemporal(carrito[indiceEnCarrito].libro->codigo, carrito[indiceEnCarrito].cantidad);
                     for (int i = indiceEnCarrito; i < cantidadEnCarrito - 1; i++) {
                         carrito[i] = carrito[i + 1];
                     }
@@ -572,17 +649,13 @@ void menuCrearPedido() {
                         printf("Cantidad actual: %d. ¿Cuántas unidades desea eliminar? (o 'c' para cancelar): ", carrito[indiceEnCarrito].cantidad);
                         fgets(inputBuffer, sizeof(inputBuffer), stdin);
                         inputBuffer[strcspn(inputBuffer, "\n")] = 0;
-
                         if (strcmp(inputBuffer, "c") == 0 || strcmp(inputBuffer, "C") == 0) break;
-                        
                         char* endptr;
                         long tempCantidad = strtol(inputBuffer, &endptr, 10);
-
                         if (endptr == inputBuffer || *endptr != '\0') {
                             printf("\033[0;31mError: Ingrese un número válido.\033[0m\n");
                             continue;
                         }
-                        
                         cantidadAReducir = (int)tempCantidad;
                         if (cantidadAReducir <= 0 || cantidadAReducir > carrito[indiceEnCarrito].cantidad) {
                             printf("\033[0;31mError: Cantidad a eliminar inválida. Debe ser entre 1 y %d.\033[0m\n", carrito[indiceEnCarrito].cantidad);
@@ -592,6 +665,7 @@ void menuCrearPedido() {
                     } while (!cantidadValida);
                     
                     if (cantidadValida) {
+                        actualizarStockTemporal(carrito[indiceEnCarrito].libro->codigo, cantidadAReducir);
                         carrito[indiceEnCarrito].cantidad -= cantidadAReducir;
                         printf("\033[0;32m%d unidades de '%s' eliminadas. Quedan %d.\033[0m\n", cantidadAReducir, carrito[indiceEnCarrito].libro->titulo, carrito[indiceEnCarrito].cantidad);
                         
@@ -638,8 +712,9 @@ void menuCrearPedido() {
                     }
                 } while (clienteEncontrado == NULL);
                 
-                if (clienteEncontrado == NULL) break;
-
+                if (clienteEncontrado == NULL) {
+                    break;
+                }
                 char fechaPedido[20];
                 do {
                     printf("Ingrese la fecha del pedido (dd/mm/aaaa): ");
@@ -649,16 +724,17 @@ void menuCrearPedido() {
                         printf("\033[0;31mFormato de fecha inválido. Intente de nuevo.\033[0m\n");
                     }
                 } while (!validarFecha(fechaPedido));
+                liberarCopiaTemporalLibros();
                 
                 generarPedido(carrito, cantidadEnCarrito, subtotalActual, clienteEncontrado, fechaPedido);
                 return;
             }
             case '4': {
+                liberarCopiaTemporalLibros();
                 CLEAR;
                 if (carrito != NULL) {
                     free(carrito);
                 }
-                CLEAR;
                 printf("Creación de pedido cancelada.\n");
                 printf("Regresando al menu anterior.\n");
                 return;
@@ -670,6 +746,7 @@ void menuCrearPedido() {
         }
     }
 }
+
 
 void modificarPedido(Pedido* pedidoAModificar) {
     char opcion[10];
