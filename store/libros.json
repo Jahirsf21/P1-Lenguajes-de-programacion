@@ -4,13 +4,13 @@
         "autor": "tun Tun",
         "codigo": "001",
         "precio": 300241.00,
-        "stock": 10
+        "stock": 8
     },
     {
         "titulo": "TOTko",
         "autor": "tun",
         "codigo": "004",
         "precio": 243141.00,
-        "stock": 30
+        "stock": 26
     }
 ]

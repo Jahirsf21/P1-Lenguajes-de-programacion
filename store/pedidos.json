@@ -1,0 +1,36 @@
+[
+    {
+        "codigo": "PED-001",
+        "fecha": "14/09/2025",
+        "nombre del cliente": "Jesimar Kadir",
+        "telefono del cliente": "62435191",
+        "cedula del cliente": "602240916",
+        "subtotal": 600482.00,
+        "impuesto": 78062.66,
+        "total": 678544.62,
+        "detalles": [
+            {
+                "titulo del libro": "tUN TUN SAHUR",
+                "codigo del libro": "001",
+                "cantidad": 2
+            }
+        ]
+    },
+    {
+        "codigo": "PED-002",
+        "fecha": "13/09/2025",
+        "nombre del cliente": "Jesimar Kadir",
+        "telefono del cliente": "62435191",
+        "cedula del cliente": "602240916",
+        "subtotal": 972564.00,
+        "impuesto": 126433.32,
+        "total": 1098997.38,
+        "detalles": [
+            {
+                "titulo del libro": "TOTko",
+                "codigo del libro": "004",
+                "cantidad": 4
+            }
+        ]
+    }
+]

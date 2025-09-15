@@ -990,23 +990,33 @@ int obtenerCantPedidosCliente(Cliente* cliente){
 
 int cantVentasLibro(Libro* libro){
     int res=0;
+    int temp=0;
     for(int i=0; i<cantidadPedidos; i++){
         for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
-            if((pedidos+i)->detalles->libro==libro) res++;
+            if(((pedidos+i)->detalles + j)->libro->codigo == libro->codigo){
+                
+                temp = (pedidos+i)->detalles->cantidad;
+                res+=temp;
+            } 
         }
     }
+    return res;
 }
 
 int cantVentasLibroAnio(Libro* libro, int anio){
     int res=0;
-    int temp;
+    int temp=0;
+    int cantTemp;
     for(int i=0; i<cantidadPedidos; i++){
         char anioTemp[4];
         strncpy(anioTemp, pedidos[i].fecha + 6, 4);
         anioTemp[4] = '\0';
         temp= atoi(anioTemp);  
         for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
-            if((((pedidos+i)->detalles + j)->libro == libro) && temp == anio) res++;
+            if((((pedidos+i)->detalles + j)->libro->codigo == libro->codigo) && temp == anio){
+                cantTemp=((pedidos+i)->detalles + j)->cantidad;
+                res+=cantTemp;
+            }
             
         }
     }
@@ -1043,6 +1053,7 @@ char** todosLosAutores(int anio, int* cantidadAutores) {
 int ventasAutorAnio(char* autor, int anio){
     int res=0;
     int temp=0;
+    int cantTemp=0;
     for(int i=0; i<cantidadPedidos; i++){
         char anioTemp[4];
         strncpy(anioTemp, pedidos[i].fecha + 6, 4);
@@ -1050,7 +1061,10 @@ int ventasAutorAnio(char* autor, int anio){
         temp= atoi(anioTemp); 
         for(int j=0; j<(pedidos+i)->cantidadDetalles; i++){
             char* actual = ((pedidos + i)->detalles + j)->libro->autor;
-            if(strcmp(autor, actual)==0 && temp==anio) res++;
+            if(strcmp(autor, actual)==0 && temp==anio){
+                cantTemp=((pedidos+i)->detalles + j)->cantidad;
+                res+=cantTemp;
+            } 
         }
     }
     
