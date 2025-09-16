@@ -22,11 +22,18 @@ typedef struct local {
 
 extern Local *local;
 
-void cargarLocal();
-bool comprobarUsuario(char* usuario, char* password);
+//metodos toString
 void verTodosLosUsuarios();
 void toStringUsuario(Usuario *usuario);
 void toStringLocal();
+
+//metodo para cargar la información del local
+void cargarLocal();
+
+//metodo para comprobar si las credenciales son correctas
+bool comprobarUsuario(char* usuario, char* password);
+
+//metodos para las estadisticas
 int totalPedidos();
 int ClientesConMasPedidos();
 int LibrosMasVendidos();

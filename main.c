@@ -9,11 +9,13 @@
 #include <ctype.h>
 #define CLEAR system("clear")
 
+//limpia el buffer de la entrada
 void limpiarBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+//menu de la gestión de libros
 void menuLibros() {
     CLEAR;
     while (true) {
@@ -26,8 +28,8 @@ void menuLibros() {
 
         char input[10];
         fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 0){
+        input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+        if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
             CLEAR;
             printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
             continue;
@@ -59,6 +61,8 @@ void menuLibros() {
     }
 }
 
+
+//menu de la gestión de clientes
 void menuClientes() {
     while (true) {
         CLEAR;
@@ -70,8 +74,12 @@ void menuClientes() {
 
         char input[10];
         fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 0) continue;
+        input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+        if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            continue;
+        }
 
         switch (input[0]) {
             case '1':
@@ -96,6 +104,7 @@ void menuClientes() {
     }
 }
 
+//menu de gestión de pedidos
 void menuPedidos() {
     while (true) { 
         CLEAR;
@@ -110,8 +119,12 @@ void menuPedidos() {
 
         char input[10];
         fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 0) continue;
+       input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+        if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
+            CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            continue;
+        }
 
         switch (input[0]) {
             case '1':
@@ -171,7 +184,7 @@ void menuPedidos() {
         }
     }
 }
-
+// menu para las estadisticas
 int menuEstadisticas(){
     CLEAR;
     while(true){
@@ -185,10 +198,11 @@ int menuEstadisticas(){
     char input[10];
     int respuesta;
     if(fgets(input, sizeof(input), stdin)){
-        input[strcspn(input, "\n")] = 0;
-            
-        if(strlen(input) == 0) {
+        input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+        if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
             CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            continue;
         }
         char respuesta = input[0];
         switch (respuesta)
@@ -244,6 +258,7 @@ int menuEstadisticas(){
 
 }
 
+//menu de opciones administrativas
 int admin(){
     while(true){
     printf("Menú de opciones administrativas:\n");
@@ -257,10 +272,11 @@ int admin(){
     char input[10];
     int respuesta;
     if(fgets(input, sizeof(input), stdin)){
-        input[strcspn(input, "\n")] = 0;
-            
-        if(strlen(input) == 0) {
+        input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+        if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
             CLEAR;
+            printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
+            continue;
         }
         char respuesta = input[0];
         switch (respuesta)
@@ -306,7 +322,7 @@ int admin(){
 
 
 
-
+//menu de opciones generales
 int general(){
     while(true){
     printf("Menú de opciones generales:\n");
@@ -317,9 +333,8 @@ int general(){
 
         char input[10];
         if(fgets(input, sizeof(input), stdin)) {  
-            input[strcspn(input, "\n")] = 0;
-            
-            if(strlen(input) == 0) {
+            input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+            if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
                 CLEAR;
                 printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
                 continue;
@@ -334,7 +349,7 @@ int general(){
                 mostrarTodosLosClientes();
             } else if(respuesta == '3') {
                 CLEAR;
-                return 0;
+                return 0; //se devuelve al estado anterior
             } else {
                 CLEAR;
                 printf("\033[0;31mOpción no válida. Por favor ingrese una de las opciones.\033[0m\n");
@@ -347,6 +362,7 @@ int general(){
     }
 }
 
+//menu del login
 int login() {
     CLEAR;
     char usuario[100];
@@ -357,7 +373,7 @@ int login() {
         if (!fgets(usuario, sizeof(usuario), stdin)) continue;
         usuario[strcspn(usuario, "\n")] = 0;
 
-        if (strcmp(usuario, "r") == 0 || strcmp(usuario, "R") == 0) {
+        if (strcmp(usuario, "r") == 0 || strcmp(usuario, "R") == 0) { //si es r, devuelve 2, valor que se trata en el menu principal
             CLEAR;
             return 2; 
         }
@@ -378,7 +394,7 @@ int login() {
         }
 
         if (comprobarUsuario(usuario, password)) {
-            return 1; 
+            return 1;  //si es 1, significa que las credenciales son correctas
         } else {
             CLEAR;
             printf("\033[0;31mNombre de usuario o contraseña incorrecta.\033[0m\n");
@@ -387,11 +403,13 @@ int login() {
 }
 
 
+//menu principal
 int main() {
+
     cargarClientes();
     cargarLibros();
     cargarPedidos();
-    cargarLocal();
+    cargarLocal(); //se carga toda la info de los archivos
     while(true){
         CLEAR;
         printf("Bienvenido al sistema de Librería\n");
@@ -403,9 +421,8 @@ int main() {
 
         char input[10];
         if(fgets(input, sizeof(input), stdin)) {  
-            input[strcspn(input, "\n")] = 0;
-            
-            if(strlen(input) == 0) {
+            input[strcspn(input, "\n")] = 0; //le quita el salto de linea a la entrada
+            if (strlen(input) == 0){ // si la longitud de la entrada es 0 es invalida
                 CLEAR;
                 printf("\033[0;31mEntrada incorrecta. Por favor ingresa una opción válida\033[0m\n");
                 continue;
@@ -424,9 +441,10 @@ int main() {
                 char confirm[10];
                 if(fgets(confirm, sizeof(confirm), stdin)) {
                     char res = confirm[0];
-                    if(res=='n' || res=='N') continue;
+                    if(res=='n' || res=='N') continue; // si es n, significa que no quiere salir
                     else 
                     {
+                        //al salirse, se libera la memoria de todos los structs
                         liberarTodosLosLibros();
                         liberarTodosLosClientes();
                         liberarTodosLosPedidos();

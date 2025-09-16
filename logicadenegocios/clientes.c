@@ -10,6 +10,7 @@
 Cliente* clientes = NULL;
 int cantidadClientes = 0;
 
+//libera la memoria de un cliente
 void liberarCliente(Cliente* cliente) {
     if (cliente != NULL) {
         if (cliente->nombre != NULL) {
@@ -27,6 +28,7 @@ void liberarCliente(Cliente* cliente) {
     }
 }
 
+//libera la memoria de todos los clientes
 void liberarTodosLosClientes() {
     if (clientes != NULL) {
         for (int i = 0; i < cantidadClientes; i++) {
@@ -37,6 +39,8 @@ void liberarTodosLosClientes() {
         cantidadClientes = 0;
     }
 }
+
+//elimina un cliente por su indice del registro de clientes (y libera su memoria)
 void eliminarCliente(int indice) {
     if (indice < 0 || indice >= cantidadClientes) {
         printf("\033[0;31mÍndice de cliente inválido\033[0m\n");
@@ -60,6 +64,7 @@ void eliminarCliente(int indice) {
     getchar();
 }
 
+//elimina un cliente por su cedula del registro de clientes (y libera su memoria)
 void eliminarClientePorCedula(char* cedula) {
     for (int i = 0; i < cantidadClientes; i++) {
         if (strcmp(clientes[i].cedula, cedula) == 0) {
@@ -69,7 +74,7 @@ void eliminarClientePorCedula(char* cedula) {
     }
 }
 
-
+//muestra todos los clientes con su información
 void mostrarTodosLosClientes() {
     printf("=== LISTA COMPLETA DE CLIENTES ===\n");
     if (cantidadClientes == 0) {
@@ -87,7 +92,7 @@ void mostrarTodosLosClientes() {
     printf("==================================\n");
 }
 
-
+//muestra la información de un cliente
 char* clienteToString(Cliente *cliente) {
 	int largo = strlen(cliente->nombre) + strlen(cliente->cedula) + strlen(cliente->telefono) + 50;
 	char* resultado = malloc(largo);
@@ -98,6 +103,8 @@ char* clienteToString(Cliente *cliente) {
 	return resultado;
 }
 
+
+//carga los clientes del archivo
 void cargarClientes() {
     FILE* archivo = fopen("store/clientes.json", "r");
 
@@ -151,6 +158,7 @@ void cargarClientes() {
     fclose(archivo);
 }
 
+//verifica si ya existe un cliente con la cedula correspondiente
 bool existeCliente(char* cedula) {
     if (cedula == NULL || strlen(cedula) == 0) {
         printf("\033[0;31mDebes ingresar la cedula del cliente a buscar\033[0m\n");
@@ -165,7 +173,7 @@ bool existeCliente(char* cedula) {
     return false; 
 }
 
-
+// verifica si el cliente ya tiene pedidos asociados
 bool clienteTienePedidos(char* cedula) {
     for (int i = 0; i < cantidadPedidos; i++) {
         if (strcmp(pedidos[i].cliente->cedula, cedula) == 0) {
@@ -175,6 +183,7 @@ bool clienteTienePedidos(char* cedula) {
     return false;
 }
 
+//validar si un numero de telefono es valido según el formato costarricense
 bool validarTelefono(char* telefono) {
     if (telefono == NULL || strlen(telefono) == 0) {
         printf("\033[0;31mEl numero de telefono no puede estar vacio\033[0m\n");
@@ -193,6 +202,7 @@ bool validarTelefono(char* telefono) {
     return true;
 }
 
+//validar si una cedula es valida segun el formato costarricense
 bool validarCedula(char* cedula) {
     if (cedula == NULL || strlen(cedula) == 0) {
         printf("\033[0;31mEl numero de cedula no puede estar vacio\033[0m\n");
@@ -217,6 +227,7 @@ bool validarCedula(char* cedula) {
     return true;
 }
 
+//validar que el nombre sea valido
 bool validarNombre(char* nombre) {
     if (nombre == NULL || strlen(nombre) == 0) {
         printf("\033[0;31mEl nombre no puede estar vacío\033[0m\n");
@@ -231,6 +242,7 @@ bool validarNombre(char* nombre) {
     return true;
 }
 
+//guardar a los clientes en el archivo correspondiente
 void guardarClientes() {
     FILE* archivo = fopen("store/clientes.json", "w");
     if (archivo == NULL) {
@@ -255,6 +267,7 @@ void guardarClientes() {
     fclose(archivo);
 }
 
+//Regirstrar a un cliente en la libreria
 void registrarClientes(char* nombre, char* cedula, char* telefono) {
 	clientes = realloc(clientes, (cantidadClientes + 1) * sizeof(Cliente));
 
@@ -276,7 +289,7 @@ void registrarClientes(char* nombre, char* cedula, char* telefono) {
     getchar();
 }
 
-
+//menu para registrar a un cliente
 void menuRegistrarCliente() {
     CLEAR;
     char nombre[100];
@@ -326,7 +339,7 @@ void menuRegistrarCliente() {
     registrarClientes(nombre, cedula, telefono);
 }
 
-
+//menu para eliminar a un cliente
 void menuEliminarCliente() {
     CLEAR;
     mostrarTodosLosClientes();
