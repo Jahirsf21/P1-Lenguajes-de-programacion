@@ -12,7 +12,7 @@
 Libro* libros = NULL;
 int stockLibros = 0;
 
-
+//libera la memoria de un libro
 void liberarLibro(Libro *libro) {
     if (libro != NULL) {
         if (libro->titulo != NULL) {
@@ -30,6 +30,7 @@ void liberarLibro(Libro *libro) {
     }
 }
 
+//libera la memoria de todos los libros
 void liberarTodosLosLibros() {
     if (libros != NULL) {
         for (int i = 0; i < stockLibros; i++) {
@@ -41,6 +42,7 @@ void liberarTodosLosLibros() {
     }
 }
 
+//muestra la información de un libro
 char* libroToString(Libro *libro) {
     int largo = strlen(libro->titulo) + strlen(libro->autor) + strlen(libro->codigo) + 100;
     char* resultado = malloc(largo);
@@ -48,7 +50,7 @@ char* libroToString(Libro *libro) {
     return resultado;
 }
 
-
+//muestra los libros de un autor en especifico
 void mostrarLibrosPorAutor(char* autor) {
     printf("=== LIBROS FILTRADOS POR AUTOR: '%s' ===\n", autor);
     int encontrados = 0;
@@ -70,6 +72,7 @@ void mostrarLibrosPorAutor(char* autor) {
     printf("==============================================\n\n");
 }
 
+//muestra la información de todos los libros disponibles
 void mostrarTodosLosLibros() {
     printf("=== LISTA DE LIBROS ===\n");
     if (stockLibros == 0) {
@@ -87,6 +90,7 @@ void mostrarTodosLosLibros() {
     printf("==================================\n");
 }
 
+//carga los libros desde el archivo correspondiente
 void cargarLibros() {
     FILE* archivo = fopen("store/libros.json", "r");
     char buffer[256];
@@ -161,6 +165,7 @@ void cargarLibros() {
     fclose(archivo);
 }
 
+//carga el inventario desde un archivo txt
 void cargaInventario(const char* archivoCarga) {
     FILE* archivo = fopen(archivoCarga, "r");
     if(archivo == NULL) {
@@ -231,6 +236,7 @@ void cargaInventario(const char* archivoCarga) {
     printf("===========================\n");
 }
 
+//guarda los libros en el archivo correspondiente
 void guardarLibros() {
     FILE* archivo = fopen("store/libros.json", "w");
     if (archivo == NULL) {
@@ -256,6 +262,7 @@ void guardarLibros() {
     fclose(archivo);
 }
 
+//verifica si un libro está asociado a un pedido
 bool libroAsociadoPedido(char* codigo) {
     for (int i = 0; i < cantidadPedidos; i++) {
         for (int j = 0; j < pedidos[i].cantidadDetalles; j++) {
@@ -267,6 +274,7 @@ bool libroAsociadoPedido(char* codigo) {
     return false;
 }
 
+//valida que la cantidad sea valida
 bool validarStock(int cantidad) {
     if (cantidad < 0) {
         printf("\033[0;31mLa cantidad debe ser un numero y no puede ser menor a 0\033[0m\n");
@@ -275,6 +283,7 @@ bool validarStock(int cantidad) {
     return true;
 }
 
+//valida que el precio sea correcto y valido
 bool validarPrecio(float precio) {
     if (isnan(precio) || precio <= 0) {
         printf("\033[0;31mEl precio debe ser un numero y no puede ser menor a 0\033[0m\n");
@@ -283,6 +292,7 @@ bool validarPrecio(float precio) {
     return true;
 }
 
+//valida el codigo
 bool validarCodigo(char* codigo) {
     if(codigo == NULL || strlen(codigo) == 0) {
         printf("\033[0;31mEl codigo del libro no puede ser vacio\033[0m\n");
@@ -308,6 +318,7 @@ bool validarCodigo(char* codigo) {
     return true;
 }
 
+//valida el string del autor
 bool validarAutor(char* autor) {
     if (autor == NULL || strlen(autor) == 0) {
         printf("\033[0;31mEl nombre del autor del libro no puede estar vacio\033[0m\n");
@@ -322,6 +333,7 @@ bool validarAutor(char* autor) {
     return true;
 }
 
+//valida el string de titulo
 bool validarTitulo(char* titulo) {
     if (titulo == NULL || strlen(titulo) == 0) {
         printf("\033[0;31mEl titulo del libro no puede estar vacío\033[0m\n");
@@ -337,6 +349,7 @@ bool validarTitulo(char* titulo) {
     return true;
 }
 
+//verifica si un libro con un codigo especifico existe
 bool existeLibro(char* codigo) {
     if (codigo == NULL || strlen(codigo) == 0) {
         printf("\033[0;31mDebes ingresar el codigo del libro a buscar\033[0m\n");
@@ -351,6 +364,7 @@ bool existeLibro(char* codigo) {
     return false; 
 }
 
+//elimina una cantidad del stock de un libro
 void eliminarStockLibro(char* codigo, int cantidad) {
     for (int i = 0; i < stockLibros; i++) {
         if (strcmp(libros[i].codigo, codigo) == 0) {
@@ -360,6 +374,7 @@ void eliminarStockLibro(char* codigo, int cantidad) {
     }
 }
 
+//agrega una cantidad al stock de un libro
 void agregarStockLibro(char* codigo, int cantidad) {
     for (int i = 0; i < stockLibros; i++) {
         if (strcmp(libros[i].codigo, codigo) == 0) {
@@ -400,6 +415,7 @@ void eliminarLibro(char* codigo) {
     }
 }
 
+//registra un libro en la biblioteca
 void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int stock) {
     libros = realloc(libros, (stockLibros + 1) * sizeof(Libro));
 
@@ -425,6 +441,7 @@ void registrarLibro(char* titulo, char* autor, char* codigo, float precio, int s
     getchar();
 }
 
+//menu para registrar un libro
 void menuRegistrarLibro() {
     char titulo[100];    
     char autor[100];    
@@ -506,7 +523,7 @@ void menuRegistrarLibro() {
     registrarLibro(titulo, autor, codigo, precio, stock);
 }
 
-
+//menu para eliminar un libro
 void menuEliminarLibro() {
     mostrarTodosLosLibros();
     char codigo[100]; 
@@ -557,6 +574,7 @@ void menuEliminarLibro() {
     }
 }
 
+//menu para hacer carga de inventario
 void menuCargarInventario() {
     char archivo[100];
     printf("=== CARGA DE INVENTARIO ===\n");

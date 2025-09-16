@@ -10,6 +10,7 @@
 
 Local* local = NULL;
 
+//carga la informacion del local
 void cargarLocal() {
     FILE* archivo = fopen("store/local.json", "r");
     if (archivo == NULL) {
@@ -107,6 +108,7 @@ void cargarLocal() {
     fclose(archivo);
 }
 
+//muestra la informacion del local
 void toStringLocal(){
     printf("Nombre del local: %s\n", local->nombre);
     printf("Número de teléfono: %s\n", local->telefono);
@@ -116,11 +118,13 @@ void toStringLocal(){
     verTodosLosUsuarios();
 }
 
+//muestra la informacion de un usuario
 void toStringUsuario(Usuario* usuario){
     printf("Nombre de Usuario: %s\n", usuario->nombre);
     printf("Contraseña: %s\n", usuario->password);
 }
 
+//muestra la informacion de todos los usuarios
 void verTodosLosUsuarios(){
     for(int i =0; i<local->cantUsuarios; i++){
         printf("Usuario %d\n", i+1);
@@ -128,7 +132,7 @@ void verTodosLosUsuarios(){
     }
 }
 
-
+//comprueba que las credenciales sean correctas (que coincidan con alguna)
 bool comprobarUsuario(char* usuario, char* password){
     for(int i =0; i<local->cantUsuarios; i++){
         
@@ -140,7 +144,7 @@ bool comprobarUsuario(char* usuario, char* password){
 }
 
 
-
+//muestra el total de pedidos por mes-año
 int totalPedidos(){
     if(cantidadPedidos==0){
         printf("No hay pedidos efectuados.");
@@ -162,7 +166,7 @@ int totalPedidos(){
     }
 }
 
-
+//ordena los clientes disponibles por la cantidad de pedidos efectuados
 Cliente* ordenarClientesCantPedidos(){
     
     Cliente* clientesTemp= malloc(cantidadClientes*sizeof(Cliente));
@@ -195,6 +199,7 @@ Cliente* ordenarClientesCantPedidos(){
     return clientesTemp;
 }
 
+//muestra los clientes con mas pedidos
 int ClientesConMasPedidos(){
    
     if(cantidadClientes==0){
@@ -217,6 +222,7 @@ int ClientesConMasPedidos(){
     return 0;
 }
 
+//ordena los libros por la cantidad de ventas
 Libro* ordenarLibrosCantVentas(){
     Libro* librosTemp= malloc(stockLibros*sizeof(Libro));
     memcpy(librosTemp, libros, stockLibros*sizeof(Libro));
@@ -245,6 +251,7 @@ Libro* ordenarLibrosCantVentas(){
     return librosTemp;
 }
 
+//mmuestra los libros mas vendidos
 int LibrosMasVendidos(){
     if(stockLibros==0) printf("No hay libros registrados");
     else{
@@ -257,6 +264,7 @@ int LibrosMasVendidos(){
     }
 }
 
+//ordena los libros por la cantidad de ventas en un año en especifico
 Libro* ordenarLibrosCantVentasAnio(int anio){
     Libro* librosTemp= malloc(stockLibros*sizeof(Libro));
     memcpy(librosTemp, libros, stockLibros*sizeof(Libro));
@@ -285,6 +293,7 @@ Libro* ordenarLibrosCantVentasAnio(int anio){
     return librosTemp;
 }
 
+//ordena a los autores por sus ventas en un año en especifico
 char** ordenarAutoresCantVentasAnio(int anio, int* cantidadAutores) {
     int cantidad=0;
     char** autores = todosLosAutores(anio, &cantidad);
@@ -310,7 +319,7 @@ char** ordenarAutoresCantVentasAnio(int anio, int* cantidadAutores) {
     return autores;
 }
 
-
+//muestra los libros mas vendidos en un año en especifico
 int LibrosMasVendidosAnio(int anio){
     if(stockLibros==0) printf("No hay libros registrados");
     else{
@@ -323,6 +332,7 @@ int LibrosMasVendidosAnio(int anio){
     }
 }
 
+//menu para mostrar los libros mas vendidos
 int LibrosMasVendidosMenu() {
     if (stockLibros == 0) {
         printf("No hay libros registrados\n");
@@ -354,7 +364,7 @@ int LibrosMasVendidosMenu() {
     }
     return 0;
 }
-
+//menu para mostrar los autores con mas ventas
 int autorConMasVentasAnio() {
     if (cantidadPedidos == 0) {
         printf("No hay pedidos registrados en el sistema.\n");

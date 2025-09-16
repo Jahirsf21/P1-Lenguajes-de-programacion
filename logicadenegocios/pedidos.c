@@ -16,6 +16,7 @@ int cantidadPedidos = 0;
 Libro* librosTemporales = NULL;
 bool stockTemporal = false;
 
+//libera la copia temporal que se hace de los libros
 void liberarCopiaTemporalLibros() {
     if (librosTemporales != NULL) {
         for (int i = 0; i < stockLibros; i++) {
@@ -28,7 +29,7 @@ void liberarCopiaTemporalLibros() {
     }
     stockTemporal = false;
 }
-
+//crea una copia temporal de los libros
 void crearCopiaTemporalLibros() {
     if (librosTemporales != NULL) {
         free(librosTemporales);
@@ -46,7 +47,7 @@ void crearCopiaTemporalLibros() {
     stockTemporal = true;
 }
 
-
+//busca un libro por su codigo en la lista temporal
 Libro* buscarLibroPorCodigoTemporal(char* codigo) {
     Libro* arrayAUsar = stockTemporal ? librosTemporales : libros;
     for (int i = 0; i < stockLibros; i++) {
@@ -58,6 +59,7 @@ Libro* buscarLibroPorCodigoTemporal(char* codigo) {
 }
 
 
+//actualiza el stock de un libro en la lista temporal
 void actualizarStockTemporal(char* codigo, int cambio) {
     if (!stockTemporal) return;
     for (int i = 0; i < stockLibros; i++) {
@@ -68,7 +70,7 @@ void actualizarStockTemporal(char* codigo, int cambio) {
     }
 }
 
-
+//muestra la informacion de un pedido
 char* pedidoToString(Pedido* pedido) {
     char buffer[2048];
     char* cursor = buffer;
@@ -88,7 +90,7 @@ char* pedidoToString(Pedido* pedido) {
     return resultado;
 }
 
-
+//muestra la informacion de todos los pedidos
 void mostrarTodosLosPedidos() {
     CLEAR;
     printf("=== LISTA COMPLETA DE PEDIDOS ===\n");
@@ -106,7 +108,7 @@ void mostrarTodosLosPedidos() {
     printf("Total de pedidos: %d\n", cantidadPedidos);
 }
 
-
+//muestra los pedidos en una fecha en especifico
 void mostrarPedidoPorFecha(char* fecha) {
     CLEAR;
     printf("=== PEDIDOS PARA LA FECHA: %s ===\n", fecha);
@@ -125,7 +127,7 @@ void mostrarPedidoPorFecha(char* fecha) {
     }
 }
 
-
+//valida que una fecha sea correcta (tenga el formato DD/MM/YYYY)
 bool validarFecha(char* fecha) {
     if (strlen(fecha) != 10) {
         return false;
@@ -142,6 +144,7 @@ bool validarFecha(char* fecha) {
     return true;
 }
 
+//busca un libro por su codigo
 Libro* buscarLibroPorCodigo(char* codigo) {
     for (int i = 0; i < stockLibros; i++) {
         if (strcmp(libros[i].codigo, codigo) == 0) {
@@ -151,6 +154,7 @@ Libro* buscarLibroPorCodigo(char* codigo) {
     return NULL;
 }
 
+//busca a un cliente por su cedula
 Cliente* buscarClientePorCedula(char* cedula) {
     for (int i = 0; i < cantidadClientes; i++) {
         if (strcmp(clientes[i].cedula, cedula) == 0) {
@@ -159,7 +163,7 @@ Cliente* buscarClientePorCedula(char* cedula) {
     }
     return NULL;
 }
-
+//guarda los pedidos en el archivo correspondiente
 void guardarPedidos() {
     FILE* archivo = fopen("store/pedidos.json", "w");
     if (archivo == NULL) {
@@ -205,6 +209,7 @@ void guardarPedidos() {
     fclose(archivo);
 }
 
+//carga los pedidos desde el archivo correspondiente
 void cargarPedidos() {
     FILE* archivo = fopen("store/pedidos.json", "r");
     if (archivo == NULL) {
@@ -312,7 +317,7 @@ void cargarPedidos() {
     fclose(archivo);
 }
 
-
+//libera la memoria de todos los pedios
 void liberarTodosLosPedidos() {
     for (int i = 0; i < cantidadPedidos; i++) {
         free(pedidos[i].codigo);
@@ -324,10 +329,10 @@ void liberarTodosLosPedidos() {
         pedidos = NULL; 
     }
     cantidadPedidos = 0; 
-    //printf("\033[0;32mTodos los pedidos han sido liberados de la memoria.\033[0m\n");
+
 }
 
-
+//elimina un pedido por su codigo
 void eliminarPedido(char* codigo) {
     int indice = -1;
     for (int i = 0; i < cantidadPedidos; i++) {
@@ -362,6 +367,7 @@ void eliminarPedido(char* codigo) {
     printf("\033[0;32mPedido '%s' eliminado exitosamente. El stock ha sido restaurado.\033[0m\n", codigo);
 }
 
+//genera un pedido y lo guarda en memoria
 void generarPedido(DetallePedido* carrito, int cantidadEnCarrito, float subtotal, Cliente* cliente, char* fecha) {
     for (int i = 0; i < cantidadEnCarrito; i++) {
         eliminarStockLibro(carrito[i].libro->codigo, carrito[i].cantidad);
@@ -390,7 +396,7 @@ void generarPedido(DetallePedido* carrito, int cantidadEnCarrito, float subtotal
     printf("=== PEDIDO GENERADO EXITOSAMENTE ===\n");
 }
 
-
+//actualiza el monto de un pedido en especifico
 void actualizarMontoPedido(Pedido* pedido) {
     float subtotal = 0;
     for (int i = 0; i < pedido->cantidadDetalles; i++) {
@@ -401,6 +407,7 @@ void actualizarMontoPedido(Pedido* pedido) {
     pedido->total = subtotal + pedido->impuesto;
 }
 
+//menu para eliminar un pedido
 void menuEliminarPedido() {
     if (cantidadPedidos == 0) {
         printf("\033[0;31mNo hay pedidos registrados para eliminar.\033[0m\n");
@@ -424,6 +431,7 @@ void menuEliminarPedido() {
     eliminarPedido(codigoPedido);
 }
 
+//menu para crear un pedido
 void menuCrearPedido() {
     if (stockLibros == 0) {
         printf("\033[0;31mNo hay libros en el catálogo. No se puede crear el pedido.\033[0m\n");
@@ -749,7 +757,7 @@ void menuCrearPedido() {
     }
 }
 
-
+// modificar la informacion de un pedido
 void modificarPedido(Pedido* pedidoAModificar) {
     char opcion[10];
     while (true) {
@@ -872,6 +880,7 @@ void modificarPedido(Pedido* pedidoAModificar) {
     }
 }
 
+
 void menuModificarPedido() {
     if (cantidadPedidos == 0) {
         printf("\033[0;31mNo hay pedidos registrados para modificar.\033[0m\n");
@@ -902,7 +911,7 @@ void menuModificarPedido() {
     } while (pedidoAModificar == NULL);
     modificarPedido(pedidoAModificar);
 }
-
+//obtiene el ultimo año donde se efectuó un pedido
 int obtenerUltimoAnio(){
     int res=0;
     int temp;
@@ -918,7 +927,7 @@ int obtenerUltimoAnio(){
     return res;
 }
 
-
+//obtiene el primer año donde se efectuó un pedido
 int obtenerPrimerAnio(){
     int res=9999;
     int temp;
@@ -935,7 +944,7 @@ int obtenerPrimerAnio(){
     return res;
 }
 
-
+//obtiene el total facturado en un  mes-año especifico
 float obtenerTotalMesAnio(int mes, int anio){
     int tempMes;
     int tempAnio;
@@ -957,6 +966,7 @@ float obtenerTotalMesAnio(int mes, int anio){
     }
     return res;
 }
+//obtiene el total facturado en un año en especifico
 float obtenerTotalAnio(int anio){
     int res=0;
     for(int i=1; i<=12; i++){
@@ -965,6 +975,7 @@ float obtenerTotalAnio(int anio){
     return res;
 }
 
+//obtiene el total general facturado
 float obtenerTotalGeneral(){
     int primero = obtenerPrimerAnio();
     int ultimo = obtenerUltimoAnio();
@@ -975,7 +986,7 @@ float obtenerTotalGeneral(){
     return res;
 }
 
-
+//obtener la cantidad de pedidos hechos por un cliente
 int obtenerCantPedidosCliente(Cliente* cliente){
     
     int res=0;
@@ -987,7 +998,7 @@ int obtenerCantPedidosCliente(Cliente* cliente){
     }
     return res;
 }
-
+//obtiene la cantidad de ventas de un libro
 int cantVentasLibro(Libro* libro){
     int res=0;
     int temp=0;
@@ -1003,6 +1014,7 @@ int cantVentasLibro(Libro* libro){
     return res;
 }
 
+//obtiene la cantidad de ventas de un libro en un año en especifico
 int cantVentasLibroAnio(Libro* libro, int anio){
     int res=0;
     int temp=0;
@@ -1022,6 +1034,7 @@ int cantVentasLibroAnio(Libro* libro, int anio){
     }
 }
 
+//verifica si ya está un autor en la lista arr
 bool yaEsta(char** arr, char* autor, int len){
     for(int i=0; i<len;i++){
         if(*(arr+i)==autor) return true;
@@ -1029,6 +1042,7 @@ bool yaEsta(char** arr, char* autor, int len){
     return false;
 }
 
+//devuelve una lista con todos los autores disponibles
 char** todosLosAutores(int anio, int* cantidadAutores) {
 
     char** autores = NULL;
@@ -1049,7 +1063,7 @@ char** todosLosAutores(int anio, int* cantidadAutores) {
     return autores;
 }
 
-
+//obtiene la cantidad de ventas de un autor en un año en especifico
 int ventasAutorAnio(char* autor, int anio){
     int res=0;
     int temp=0;
